@@ -1,0 +1,2413 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>&#x7948;&#x7652;&#x8A3A;&#x6240; &middot; &#x7BA1;&#x7406;&#x7E3D;&#x90E8;</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400&family=DM+Mono:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1a18;--paper:#f5f0e8;--paper2:#ede8dc;--border:#c8c0b0;--muted:#7a7060;
+  --moss:#4a7c59;--moss-light:#6a9c79;--moss-pale:#d4e6d8;
+  --rust:#c0522a;--rust-pale:#f0d8cc;
+  --gold:#b8900a;--gold-pale:#f2e8c4;
+  --amber:#8c5a20;--amber-light:#b07830;--amber-pale:#f0e4cc;--amber-mid:#d4a060;
+  --red:#a03020;--red-pale:#f0ddd8;
+  --green:#3a6449;--green-pale:#d4e6d8;
+  --blue:#2a4870;--blue-pale:#d8e4f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+
+/* HUB */
+/* LOGIN SCREEN */
+#screen-login{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#1a3a28 0%,#0e2218 40%,#0a1a12 100%);}
+#screen-login::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 20% 30%,rgba(60,120,70,.25) 0%,transparent 55%),
+             radial-gradient(ellipse 50% 70% at 80% 70%,rgba(30,80,50,.2) 0%,transparent 55%),
+             radial-gradient(ellipse 40% 40% at 50% 10%,rgba(80,150,80,.12) 0%,transparent 50%);
+  pointer-events:none;}
+#screen-login.hidden{opacity:0;pointer-events:none;transition:opacity .5s;}
+.login-box{position:relative;z-index:2;width:320px;padding:40px 32px 36px;
+  background:rgba(255,255,255,.07);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.15);border-radius:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 0 1px rgba(120,200,120,.08);}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo-icon{font-size:48px;margin-bottom:8px;filter:drop-shadow(0 4px 12px rgba(80,180,100,.4));}
+.login-org{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:300;color:#d8f0d8;letter-spacing:4px;line-height:1.5;text-align:center;}
+.login-sub{font-family:'DM Mono',monospace;font-size:10px;color:rgba(160,220,160,.6);letter-spacing:2px;text-align:center;margin-top:6px;}
+.login-field{margin-bottom:14px;}
+.login-label{font-size:11px;color:rgba(200,240,200,.7);letter-spacing:1px;margin-bottom:6px;display:block;}
+.login-input{width:100%;padding:11px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#e8f8e8;font-size:14px;font-family:'Noto Sans TC',sans-serif;outline:none;transition:border-color .2s;}
+.login-input:focus{border-color:rgba(100,200,100,.5);background:rgba(255,255,255,.12);}
+.login-input::placeholder{color:rgba(255,255,255,.25);}
+.login-btn{width:100%;padding:13px;margin-top:8px;background:linear-gradient(135deg,#3a7a48,#2a6038);color:#e8f8e8;border:none;border-radius:10px;font-size:15px;font-family:'Noto Serif TC',serif;font-weight:300;letter-spacing:2px;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(40,100,60,.4);}
+.login-btn:hover{background:linear-gradient(135deg,#4a9058,#3a7048);transform:translateY(-1px);}
+.login-btn:active{transform:translateY(0);}
+.login-error{color:#ff9090;font-size:12px;text-align:center;margin-top:10px;display:none;}
+.login-error.show{display:block;}
+
+/* Decorative leaves */
+.login-leaf{position:absolute;opacity:.15;pointer-events:none;font-size:80px;line-height:1;}
+.login-leaf-1{top:-20px;left:-20px;transform:rotate(-30deg);}
+.login-leaf-2{bottom:-10px;right:-15px;transform:rotate(150deg);}
+
+#screen-hub{position:fixed;inset:0;z-index:10;
+  background:linear-gradient(160deg,#1e4530 0%,#122a1c 50%,#0e2018 100%);
+  transition:opacity .4s;}
+#screen-hub.hidden{opacity:0;pointer-events:none;}
+#screen-hub::before{content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 55% at 25% 35%,rgba(60,140,70,.22) 0%,transparent 60%),
+    radial-gradient(ellipse 55% 75% at 78% 68%,rgba(30,100,55,.18) 0%,transparent 58%),
+    radial-gradient(ellipse 35% 35% at 55% 8%,rgba(90,180,80,.12) 0%,transparent 50%),
+    radial-gradient(ellipse 40% 30% at 10% 80%,rgba(50,120,60,.1) 0%,transparent 45%);
+  pointer-events:none;}
+.hub-topbar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;padding:16px 24px;
+  background:rgba(10,25,15,.7);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(100,200,100,.1);z-index:5;}
+.hub-title{font-family:'Noto Serif TC',serif;font-weight:300;font-size:22px;color:#d0ecd0;letter-spacing:5px;}
+.hub-sub{font-family:'DM Mono',monospace;font-size:10px;color:#5aac6a;letter-spacing:2px;margin-left:16px;margin-top:3px;}
+.hub-hint{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:rgba(150,220,150,.4);letter-spacing:1px;}
+#hub-canvas{position:absolute;inset:0;pointer-events:none;z-index:1;}
+#hub-map{position:absolute;inset:0;z-index:2;overflow:hidden;}
+#hub-inner{position:absolute;width:100%;height:100%;}
+.center-node{position:absolute;transform:translate(-50%,-50%);z-index:10;}
+.center-circle{width:124px;height:124px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#4a9060,#2a6040);
+  border:2px solid rgba(120,220,140,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 0 50px rgba(60,160,80,.5),0 0 100px rgba(50,130,70,.2),inset 0 1px 0 rgba(255,255,255,.15);}
+.center-icon{font-size:32px;margin-bottom:5px;filter:drop-shadow(0 2px 8px rgba(80,200,100,.5));}
+.center-label{font-family:'Noto Serif TC',serif;font-size:13px;font-weight:300;color:#c8f0d0;letter-spacing:2px;text-align:center;line-height:1.5;}
+.pulse-ring{position:absolute;top:50%;left:50%;border-radius:50%;border:1.5px solid rgba(80,180,100,.35);animation:pulseRing 3s ease-out infinite;pointer-events:none;transform:translate(-50%,-50%);}
+.pulse-ring:nth-child(2){animation-delay:1s;}.pulse-ring:nth-child(3){animation-delay:2s;}
+@keyframes pulseRing{0%{width:124px;height:124px;opacity:.7;}100%{width:300px;height:300px;opacity:0;}}
+.dept-node{position:absolute;transform:translate(-50%,-50%);z-index:10;cursor:pointer;animation:nodeIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes nodeIn{from{opacity:0;transform:translate(-50%,-50%) scale(0.6)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.dept-node:nth-child(2){animation-delay:.1s}.dept-node:nth-child(3){animation-delay:.2s}
+.dept-node:nth-child(4){animation-delay:.3s}.dept-node:nth-child(5){animation-delay:.4s}
+.dept-node:nth-child(6){animation-delay:.5s}.dept-node:nth-child(7){animation-delay:.6s}
+.dept-card{width:122px;padding:16px 10px;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .25s,box-shadow .25s;user-select:none;-webkit-user-select:none;}
+.dept-card:hover{transform:scale(1.08) translateY(-4px);}
+.dept-icon{font-size:26px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));}
+.dept-name{font-family:'Noto Serif TC',serif;font-size:13px;font-weight:300;text-align:center;line-height:1.6;letter-spacing:1.5px;}
+.dept-status{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 9px;border-radius:8px;}
+.dept-finance{background:rgba(28,65,42,.92);box-shadow:0 6px 36px rgba(60,160,90,.35),0 0 0 1px rgba(80,180,100,.3);}
+.dept-finance .dept-name{color:#a0e0b0;}.dept-finance .dept-status{background:rgba(80,180,100,.25);color:#70d080;}
+.dept-admin{background:rgba(55,42,25,.92);box-shadow:0 6px 36px rgba(180,120,50,.3),0 0 0 1px rgba(200,140,60,.25);}
+.dept-admin .dept-name{color:#f0c880;}.dept-admin .dept-status{background:rgba(190,140,60,.22);color:#e0b060;}
+.dept-curriculum{background:rgba(28,38,65,.92);box-shadow:0 6px 36px rgba(70,110,200,.3),0 0 0 1px rgba(90,130,210,.25);}
+.dept-curriculum .dept-name{color:#a8c8f8;}.dept-curriculum .dept-status{background:rgba(90,130,200,.22);color:#88b0e8;}
+.dept-marketing{background:rgba(58,28,50,.92);box-shadow:0 6px 36px rgba(200,80,150,.28),0 0 0 1px rgba(220,100,170,.22);}
+.dept-marketing .dept-name{color:#f0a8d0;}.dept-marketing .dept-status{background:rgba(200,90,150,.22);color:#e080b8;}
+.dept-tech{background:rgba(25,48,60,.92);box-shadow:0 6px 36px rgba(50,160,200,.28),0 0 0 1px rgba(70,180,220,.22);}
+.dept-tech .dept-name{color:#90d8f0;}.dept-tech .dept-status{background:rgba(60,160,200,.22);color:#70c8e0;}
+.dept-systems{background:rgba(50,42,18,.92);box-shadow:0 6px 36px rgba(210,180,50,.3),0 0 0 1px rgba(230,200,70,.25);}
+.dept-systems .dept-name{color:#f8e080;}.dept-systems .dept-status{background:rgba(210,180,50,.25);color:#f0c840;}
+.hub-pan-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:10px;color:#444;letter-spacing:1.5px;pointer-events:none;z-index:5;}
+.hub-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
+.hub-modal-overlay.show{opacity:1;pointer-events:all;}
+.hub-modal-box{background:#141614;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 32px;max-width:300px;text-align:center;}
+.hub-modal-icon{font-size:36px;margin-bottom:12px;}.hub-modal-title{font-family:'Noto Serif TC',serif;font-size:16px;color:#e0ddd8;margin-bottom:8px;font-weight:300;}
+.hub-modal-desc{font-size:12px;color:#666;line-height:1.7;margin-bottom:20px;}
+.hub-modal-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#aaa;font-size:13px;padding:9px 24px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
+
+/* DEPT SCREENS */
+.dept-screen{display:none;flex-direction:column;min-height:100vh;}
+.dept-screen.active{display:flex;}
+.dept-header{background:var(--ink);padding:14px 16px;display:flex;align-items:center;gap:10px;}
+.dept-back{color:#888;font-size:20px;cursor:pointer;border:none;background:none;padding:0 8px 0 0;line-height:1;}
+.dept-header-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:300;color:#f0ece4;letter-spacing:3px;}
+.dept-header-sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;margin-top:2px;}
+.dept-nav{display:flex;background:var(--paper2);border-bottom:1px solid var(--border);overflow-x:auto;}
+.nav-tab{padding:11px 16px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;color:var(--muted);transition:all .2s;}
+#dept-finance .nav-tab.active{color:var(--moss);border-bottom-color:var(--moss);background:var(--paper);}
+#dept-admin .nav-tab.active{color:var(--amber);border-bottom-color:var(--amber);background:var(--paper);}
+.dept-body{flex:1;overflow-y:auto;}
+.page{display:none;padding:18px 16px 40px;}.page.active{display:block;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:20px;font-size:13px;transition:transform .3s;z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.sec,.section-title{font-family:'Noto Serif TC',serif;font-size:13px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec::after,.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.add-form{background:white;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}.form-group.full{grid-column:1/-1;}
+label{font-size:11px;color:var(--muted);letter-spacing:.5px;font-weight:500;}
+input,select,textarea{padding:9px 11px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--moss);}
+textarea{resize:vertical;min-height:60px;}
+.btn{padding:9px 16px;border-radius:6px;border:none;font-size:13px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;font-weight:500;transition:all .2s;}
+.btn-primary,.btn-teal{background:var(--moss);color:white;}.btn-primary:hover,.btn-teal:hover{background:var(--moss-light);}
+.btn-amber{background:var(--amber);color:white;}.btn-amber:hover{background:var(--amber-light);}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-ai,.btn-analyze{background:var(--ink);color:var(--paper);display:flex;align-items:center;gap:6px;}
+.btn-ai:hover,.btn-analyze:hover{background:#333;}.btn-ai:disabled,.btn-analyze:disabled{opacity:.5;cursor:not-allowed;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+.empty{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SYSTEMS LAUNCHER */
+.sys-header{background:#111009;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sys-back{color:#888;font-size:20px;cursor:pointer;border:none;background:none;padding:0 8px 0 0;line-height:1;}
+.sys-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:300;color:#f0ece0;letter-spacing:3px;}
+.sys-sub{font-family:'DM Mono',monospace;font-size:10px;color:#a08030;letter-spacing:2px;margin-top:2px;}
+.sys-body{padding:20px 16px 40px;overflow-y:auto;flex:1;}
+.sys-group-title{font-family:'DM Mono',monospace;font-size:10px;color:#666;letter-spacing:2px;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06);}
+.sys-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:4px;}
+.sys-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.sys-card:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);transform:translateX(3px);}
+.sys-card-icon{font-size:24px;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;}
+.sys-card-info{flex:1;}
+.sys-card-name{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:300;color:#e8e4dc;margin-bottom:3px;letter-spacing:1px;}
+.sys-card-desc{font-size:11px;color:#666;line-height:1.5;}
+.sys-card-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+.sys-tag{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:8px;color:#888;border:1px solid rgba(255,255,255,.1);}
+.sys-arrow{color:#555;font-size:16px;flex-shrink:0;}
+.sys-card:hover .sys-arrow{color:#a08030;}
+.sys-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dot-live{background:#4a9a60;box-shadow:0 0 6px rgba(74,154,96,.6);}
+.dot-local{background:#a08030;}
+.dot-offline{background:#444;}
+
+
+  :root {
+    --ink: #1a1a18;
+    --paper: #f5f0e8;
+    --paper2: #ede8dc;
+    --moss: #4a7c59;
+    --moss-light: #6a9c79;
+    --moss-pale: #d4e6d8;
+    --rust: #c0522a;
+    --rust-pale: #f0d8cc;
+    --gold: #b8900a;
+    --gold-pale: #f2e8c4;
+    --border: #c8c0b0;
+    --muted: #7a7060;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+  }
+  .header-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 4px;
+  }
+  .header-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .header-month {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--moss-light);
+    margin-left: auto;
+    margin-bottom: 2px;
+  }
+
+  /* Nav tabs */
+  .nav {
+    display: flex;
+    background: var(--paper2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    transition: all .2s;
+    letter-spacing: .5px;
+  }
+  .nav-tab.active {
+    color: var(--moss);
+    border-bottom-color: var(--moss);
+    background: var(--paper);
+  }
+
+  /* Pages */
+  .page { display: none; padding: 20px 16px; }
+  .page.active { display: block; }
+
+  /* Dashboard */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: white;
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi-card.income::before { background: var(--moss); }
+  .kpi-card.expense::before { background: var(--rust); }
+  .kpi-card.profit::before { background: var(--gold); }
+  .kpi-card.insurance::before { background: #5a7db0; }
+  .kpi-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .kpi-card.income .kpi-value { color: var(--moss); }
+  .kpi-card.expense .kpi-value { color: var(--rust); }
+  .kpi-card.profit .kpi-value { color: var(--gold); }
+  .kpi-card.insurance .kpi-value { color: #5a7db0; }
+  .kpi-sub {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Section */
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Income/Expense breakdown */
+  .breakdown-list { margin-bottom: 20px; }
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--paper2);
+    gap: 10px;
+  }
+  .breakdown-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .breakdown-name { font-size: 13px; flex: 1; }
+  .breakdown-amount {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .breakdown-bar-wrap {
+    width: 60px; height: 4px;
+    background: var(--paper2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .breakdown-bar { height: 100%; border-radius: 2px; }
+
+  /* Add form */
+  .add-form {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1/-1; }
+  label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .5px;
+    font-weight: 500;
+  }
+  input, select, textarea {
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    transition: border-color .2s;
+  }
+  input:focus, select:focus { border-color: var(--moss); }
+  textarea { resize: vertical; min-height: 60px; }
+
+  /* Buttons */
+  .btn {
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    font-size: 13px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all .2s;
+  }
+  .btn-primary {
+    background: var(--moss);
+    color: white;
+  }
+  .btn-primary:hover { background: #3a6449; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ai {
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-ai:hover { background: #333; }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Records table */
+  .records-wrap { overflow-x: auto; }
+  .records-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .records-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 9px 10px;
+    text-align: left;
+    font-weight: 400;
+    letter-spacing: .5px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .records-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--paper2);
+    vertical-align: middle;
+  }
+  .records-table tr:hover td { background: var(--paper2); }
+  .tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .tag-income { background: var(--moss-pale); color: var(--moss); }
+  .tag-expense { background: var(--rust-pale); color: var(--rust); }
+  .tag-insurance { background: #dce6f0; color: #3a5a80; }
+  .amount-income { color: var(--moss); font-family: 'DM Mono', monospace; }
+  .amount-expense { color: var(--rust); font-family: 'DM Mono', monospace; }
+  .del-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 5px;
+  }
+  .del-btn:hover { color: var(--rust); }
+
+  /* Month selector */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .month-nav button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .month-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 90px;
+    text-align: center;
+  }
+
+  /* AI Chat */
+  .ai-section {
+    background: var(--ink);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .ai-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #333;
+  }
+  .ai-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--moss-light);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+  .ai-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #aaa;
+    letter-spacing: 1px;
+  }
+  .ai-messages {
+    padding: 16px;
+    min-height: 120px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ai-msg {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .ai-msg.user { flex-direction: row-reverse; }
+  .ai-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .ai-msg.bot .ai-avatar { background: var(--moss); color: white; }
+  .ai-msg.user .ai-avatar { background: #444; color: #ccc; }
+  .ai-bubble {
+    max-width: 80%;
+    padding: 10px 13px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .ai-msg.bot .ai-bubble { background: #2a2a28; color: #e0ddd8; }
+  .ai-msg.user .ai-bubble { background: var(--moss); color: white; }
+  .ai-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 8px;
+  }
+  .ai-input {
+    flex: 1;
+    background: #2a2a28;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: #e0ddd8;
+    font-size: 13px;
+    font-family: 'Noto Sans TC', sans-serif;
+    outline: none;
+  }
+  .ai-input::placeholder { color: #666; }
+  .ai-input:focus { border-color: var(--moss); }
+  .ai-send {
+    background: var(--moss);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background .2s;
+  }
+  .ai-send:hover { background: var(--moss-light); }
+  .quick-asks {
+    display: flex;
+    gap: 6px;
+    padding: 0 16px 12px;
+    flex-wrap: wrap;
+  }
+  .quick-btn {
+    background: #2a2a28;
+    border: 1px solid #444;
+    border-radius: 14px;
+    color: #aaa;
+    font-size: 11px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all .2s;
+  }
+  .quick-btn:hover { background: #3a3a38; color: var(--moss-light); border-color: var(--moss); }
+
+  /* Labor/health insurance section */
+  .insurance-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .insurance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--paper2);
+    font-size: 13px;
+  }
+  .insurance-row:last-child { border-bottom: none; }
+  .insurance-row .label { color: var(--muted); }
+  .insurance-row .val { font-family: 'DM Mono', monospace; font-weight: 500; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    transition: transform .3s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 32px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* Loading */
+  .loading-dots::after {
+    content: '...';
+    animation: dots 1.2s steps(4, end) infinite;
+  }
+  @keyframes dots {
+    0%,20% { content: '.'; }
+    40% { content: '..'; }
+    60%,100% { content: '...'; }
+  }
+
+  .profit-positive { color: var(--moss); }
+  .profit-negative { color: var(--rust); }
+
+
+
+
+
+
+
+/* Header */
+.header {
+  background: var(--ink);
+  padding: 16px 20px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.back-btn {
+  color: #888;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+  padding: 2px 8px 2px 0;
+}
+.header-text {}
+.header-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 18px;
+  font-weight: 300;
+  color: #f0ece4;
+  letter-spacing: 3px;
+}
+.header-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--amber-mid);
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  background: var(--paper2);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.nav-tab {
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  transition: all .2s;
+}
+.nav-tab.active { color: var(--amber); border-bottom-color: var(--amber); background: var(--paper); }
+
+/* Pages */
+.page { display: none; padding: 18px 16px 32px; }
+.page.active { display: block; }
+
+/* Section title */
+.sec {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* Upload zone */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  margin-bottom: 16px;
+  position: relative;
+  background: white;
+}
+.upload-zone:hover, .upload-zone.drag { border-color: var(--amber); background: var(--amber-pale); }
+.upload-zone input { position:absolute;inset:0;opacity:0;cursor:pointer; }
+.upload-icon { font-size: 36px; margin-bottom: 8px; }
+.upload-label { font-size: 14px; color: var(--muted); }
+.upload-sub { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+/* Preview images */
+.img-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.img-thumb {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  position: relative;
+  background: var(--paper2);
+}
+.img-thumb img { width:100%; height:100%; object-fit:cover; }
+.img-thumb .del {
+  position:absolute; top:4px; right:4px;
+  background:rgba(0,0,0,0.6); color:white;
+  border:none; border-radius:50%;
+  width:20px; height:20px; font-size:11px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+
+/* AI result box */
+.ai-result {
+  background: var(--ink);
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.ai-result-header {
+  background: rgba(255,255,255,0.05);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.ai-dot { width:7px;height:7px;border-radius:50%;background:var(--amber-mid);animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.ai-result-title { font-family:'DM Mono',monospace; font-size:11px; color:#888; letter-spacing:1.5px; }
+.ai-result-body { padding:14px; color:#d8d0c4; font-size:13px; line-height:1.8; white-space:pre-wrap; }
+.ai-result-body.empty { color:#555; font-style:italic; }
+
+/* Alert tags */
+.alert-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.alert-item {
+  display:flex; align-items:flex-start; gap:10px;
+  background:white; border-radius:8px;
+  padding:11px 13px;
+  border-left:3px solid var(--border);
+}
+.alert-item.high { border-left-color:var(--red); background:var(--red-pale); }
+.alert-item.medium { border-left-color:var(--amber); background:var(--amber-pale); }
+.alert-item.low { border-left-color:var(--green); background:var(--green-pale); }
+.alert-item.info { border-left-color:var(--blue); background:var(--blue-pale); }
+.alert-priority {
+  font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+  padding:2px 7px; border-radius:8px; white-space:nowrap; flex-shrink:0;
+}
+.high .alert-priority { background:var(--red); color:white; }
+.medium .alert-priority { background:var(--amber); color:white; }
+.low .alert-priority { background:var(--green); color:white; }
+.info .alert-priority { background:var(--blue); color:white; }
+.alert-text { font-size:12px; line-height:1.6; flex:1; }
+.alert-done { background:none;border:none;color:#aaa;cursor:pointer;font-size:16px;flex-shrink:0; }
+.alert-done:hover { color:var(--green); }
+
+/* Document list */
+.doc-list { display:flex; flex-direction:column; gap:8px; }
+.doc-item {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:13px 14px;
+  cursor:pointer;
+  transition:border-color .2s, box-shadow .2s;
+}
+.doc-item:hover { border-color:var(--amber); box-shadow:0 2px 12px rgba(140,90,32,0.1); }
+.doc-top { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.doc-icon { font-size:20px; flex-shrink:0; }
+.doc-title { font-size:14px; font-weight:500; flex:1; }
+.doc-date { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+.doc-summary { font-size:12px; color:var(--muted); line-height:1.6; }
+.doc-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.doc-tag {
+  font-size:10px; padding:2px 8px; border-radius:10px;
+  background:var(--amber-pale); color:var(--amber);
+  font-family:'DM Mono',monospace;
+}
+.doc-alert-badge {
+  background:var(--red); color:white;
+  font-size:10px; padding:1px 6px; border-radius:8px;
+  font-family:'DM Mono',monospace;
+}
+
+/* Notes */
+.note-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.note-card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:13px;
+  position:relative;
+}
+.note-card.pinned { border-color:var(--amber); }
+.note-card.pinned::before {
+  content:'📌';
+  position:absolute; top:-8px; right:8px; font-size:16px;
+}
+.note-card-header { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+.note-cat {
+  font-size:10px; padding:2px 7px; border-radius:8px;
+  font-family:'DM Mono',monospace;
+}
+.note-date { font-size:10px; color:var(--muted); margin-left:auto; font-family:'DM Mono',monospace; }
+.note-text { font-size:12px; line-height:1.7; color:var(--ink); }
+.note-del { position:absolute; bottom:8px; right:10px; background:none; border:none; color:#ddd; cursor:pointer; font-size:13px; }
+.note-del:hover { color:var(--red); }
+
+/* Add note form */
+.add-form { background:white; border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:16px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+.form-group { display:flex; flex-direction:column; gap:5px; }
+.form-group.full { grid-column:1/-1; }
+label { font-size:11px; color:var(--muted); letter-spacing:.5px; font-weight:500; }
+input, select, textarea {
+  padding:9px 11px; border:1px solid var(--border); border-radius:6px;
+  font-size:13px; font-family:'Noto Sans TC',sans-serif;
+  background:var(--paper); color:var(--ink); outline:none; transition:border-color .2s;
+}
+input:focus, select:focus, textarea:focus { border-color:var(--amber); }
+textarea { resize:vertical; min-height:70px; }
+
+/* Buttons */
+.btn { padding:9px 16px; border-radius:6px; border:none; font-size:13px; font-family:'Noto Sans TC',sans-serif; cursor:pointer; font-weight:500; transition:all .2s; }
+.btn-amber { background:var(--amber); color:white; }
+.btn-amber:hover { background:var(--amber-light); }
+.btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+.btn-analyze { background:var(--ink); color:var(--paper); display:flex; align-items:center; gap:6px; }
+.btn-analyze:hover { background:#333; }
+.btn-analyze:disabled { opacity:.5; cursor:not-allowed; }
+
+/* Accreditation */
+.accred-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.accred-card {
+  background:white; border:1px solid var(--border); border-radius:10px; padding:14px;
+  text-align:center; cursor:pointer; transition:all .2s;
+}
+.accred-card:hover { border-color:var(--amber); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.06); }
+.accred-icon { font-size:28px; margin-bottom:6px; }
+.accred-title { font-size:13px; font-weight:500; color:var(--ink); margin-bottom:3px; }
+.accred-sub { font-size:11px; color:var(--muted); }
+.accred-count { font-family:'DM Mono',monospace; font-size:11px; color:var(--amber); margin-top:6px; }
+
+/* Progress bar */
+.progress-wrap { background:var(--paper2); border-radius:4px; overflow:hidden; height:6px; margin-top:8px; }
+.progress-bar { height:100%; border-radius:4px; background:var(--amber); transition:width .4s; }
+
+/* Toast */
+.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(60px); background:var(--ink); color:var(--paper); padding:10px 20px; border-radius:20px; font-size:13px; transition:transform .3s; z-index:999; white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* Loading spinner inside btn */
+.spinner { display:inline-block; width:12px; height:12px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.empty { text-align:center; padding:28px; color:var(--muted); font-size:13px; }
+
+</style>
+</head>
+<body>
+
+<!-- HUB -->
+<div id="screen-login">
+  <div class="login-leaf login-leaf-1">🌿</div>
+  <div class="login-leaf login-leaf-2">🌱</div>
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🌿</div>
+      <div class="login-org">祈癒職能治療所<br>管理系統</div>
+      <div class="login-sub">QIYU OT CLINIC · ADMIN</div>
+    </div>
+    <div class="login-field">
+      <label class="login-label">帳號</label>
+      <input class="login-input" id="login-user" type="text" placeholder="請輸入帳號" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label class="login-label">密碼</label>
+      <input class="login-input" id="login-pass" type="password" placeholder="請輸入密碼" autocomplete="current-password">
+    </div>
+    <button class="login-btn" onclick="doLogin()">登 入</button>
+    <div class="login-error" id="login-error">帳號或密碼錯誤，請再試一次</div>
+  </div>
+</div>
+
+<div id="screen-hub">
+  <div class="hub-topbar">
+    <div><div class="hub-title">祈癒職能治療所</div></div>
+    <div class="hub-sub">&#x7BA1;&#x7406;&#x7E3D;&#x90E8;</div>
+    <div class="hub-hint">&#x9EDE;&#x64CA;&#x90E8;&#x9580;&#x9032;&#x5165; &middot; &#x62D6;&#x62C9;&#x79FB;&#x52D5;</div>
+  </div>
+  <svg id="hub-canvas"></svg>
+  <div id="hub-map">
+    <div id="hub-inner">
+      <div class="pulse-ring"></div><div class="pulse-ring"></div><div class="pulse-ring"></div>
+      <div class="center-node" id="hub-center" style="left:50%;top:50%">
+        <div class="center-circle">
+          <div class="center-icon">&#x1F33F;</div>
+          <div class="center-label">祈癒<br>治療所</div>
+        </div>
+      </div>
+      <div class="dept-node" id="node-finance" data-dept="finance" data-status="active">
+        <div class="dept-card dept-finance"><div class="dept-icon">&#x1F4CA;</div><div class="dept-name">&#x8CA1;&#x52D9;<br>&#x7BA1;&#x7406;&#x90E8;</div><div class="dept-status">&#x5DF2;&#x555F;&#x7528;</div></div>
+      </div>
+      <div class="dept-node" id="node-admin" data-dept="admin" data-status="active">
+        <div class="dept-card dept-admin"><div class="dept-icon">&#x1F4CB;</div><div class="dept-name">&#x6587;&#x66F8;<br>&#x884C;&#x653F;&#x90E8;</div><div class="dept-status">&#x5DF2;&#x555F;&#x7528;</div></div>
+      </div>
+      <div class="dept-node" id="node-systems" data-dept="systems" data-status="active">
+        <div class="dept-card dept-systems"><div class="dept-icon">&#x1F5C2;&#xFE0F;</div><div class="dept-name">&#x73FE;&#x6709;<br>&#x7CFB;&#x7D71;</div><div class="dept-status">&#x5DF2;&#x555F;&#x7528;</div></div>
+      </div>
+      <div class="dept-node" id="node-curriculum" data-dept="" data-status="coming" data-modal-title="&#x8AB2;&#x7A0B;&#x898F;&#x5283;&#x90E8;" data-modal-icon="&#x1F4DA;" data-modal-desc="&#x6559;&#x6848;&#x7BA1;&#x7406;&#x3001;&#x8AB2;&#x7A0B;&#x6392;&#x7A0B;&#x3001;&#x4EBA;&#x969B;&#x4E92;&#x52D5;&#x8207;&#x60C5;&#x7DD2;&#x8AB2;&#x7A0B;&#x8A2D;&#x8A08;&#x3002;">
+        <div class="dept-card dept-curriculum"><div class="dept-icon">&#x1F4DA;</div><div class="dept-name">&#x8AB2;&#x7A0B;<br>&#x898F;&#x5283;&#x90E8;</div><div class="dept-status">&#x898F;&#x5283;&#x4E2D;</div></div>
+      </div>
+      <div class="dept-node" id="node-marketing" data-dept="" data-status="coming" data-modal-title="&#x884C;&#x92B7;&#x90E8;&#x9580;" data-modal-icon="&#x1F4E3;" data-modal-desc="IG&#x8CBC;&#x6587;&#x3001;FB&#x6587;&#x6848;&#x81EA;&#x52D5;&#x751F;&#x6210;&#xFF0C;&#x8996;&#x89BA;&#x7D20;&#x6750;&#x5EFA;&#x8B70;&#x3002;">
+        <div class="dept-card dept-marketing"><div class="dept-icon">&#x1F4E3;</div><div class="dept-name">&#x884C;&#x92B7;<br>&#x90E8;&#x9580;</div><div class="dept-status">&#x898F;&#x5283;&#x4E2D;</div></div>
+      </div>
+      <div class="dept-node" id="node-tech" data-dept="" data-status="coming" data-modal-title="&#x7A0B;&#x5F0F;&#x6280;&#x8853;&#x90E8;" data-modal-icon="&#x2699;&#xFE0F;" data-modal-desc="&#x6574;&#x5408;&#x73FE;&#x6709;&#x7CFB;&#x7D71;&#x3001;&#x512A;&#x5316;&#x9664;&#x932F;&#xFF0C;GitHub &amp; Supabase &#x7BA1;&#x7406;&#x3002;">
+        <div class="dept-card dept-tech"><div class="dept-icon">&#x2699;&#xFE0F;</div><div class="dept-name">&#x7A0B;&#x5F0F;<br>&#x6280;&#x8853;&#x90E8;</div><div class="dept-status">&#x898F;&#x5283;&#x4E2D;</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hub-pan-hint">&#x9EDE;&#x64CA;&#x9032;&#x5165; &middot; &#x62D6;&#x62C9;&#x7BC0;&#x9EDE;&#x79FB;&#x52D5;</div>
+  <div class="hub-modal-overlay" id="hub-modal" onclick="hubCloseModal()">
+    <div class="hub-modal-box" onclick="event.stopPropagation()">
+      <div class="hub-modal-icon" id="hub-modal-icon">&#x1F6A7;</div>
+      <div class="hub-modal-title" id="hub-modal-title">&#x5EFA;&#x7F6E;&#x4E2D;</div>
+      <div class="hub-modal-desc" id="hub-modal-desc"></div>
+      <button class="hub-modal-close" onclick="hubCloseModal()">&#x95DC;&#x9589;</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINANCE -->
+<div class="dept-screen" id="dept-finance">
+  <div class="dept-header">
+    <button class="dept-back" onclick="showHub()">&#8592;</button>
+    <div><div class="dept-header-title">&#x8CA1;&#x52D9;&#x7BA1;&#x7406;&#x90E8;</div><div class="dept-header-sub" style="color:#5a9a7a">FINANCE &middot; TAX &middot; INSURANCE</div></div>
+    <div id="headerMonth" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--moss-light);margin-left:auto;"></div>
+  </div>
+  <div class="dept-nav" id="fin-nav">
+    <div class="nav-tab active" onclick="finNav('dashboard',this)">&#x1F4CA; &#x7E3D;&#x89BD;</div>
+    <div class="nav-tab" onclick="finNav('income',this)">&#x1F4B0; &#x6536;&#x5165;</div>
+    <div class="nav-tab" onclick="finNav('expense',this)">&#x1F4B8; &#x652F;&#x51FA;</div>
+    <div class="nav-tab" onclick="finNav('insurance',this)">&#x1F3E5; &#x52DE;&#x5065;&#x4FDD;</div>
+    <div class="nav-tab" onclick="finNav('ai',this)">&#x1F916; AI&#x984D;&#x554F;</div>
+  </div>
+  <div class="dept-body">
+<div class="page active" id="page-dashboard">
+  <div class="month-nav">
+    <button onclick="changeMonth(-1)">‹</button>
+    <div class="month-label" id="dashMonthLabel"></div>
+    <button onclick="changeMonth(1)">›</button>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card income">
+      <div class="kpi-label">本月收入</div>
+      <div class="kpi-value" id="kpi-income">$0</div>
+      <div class="kpi-sub" id="kpi-income-sub">—</div>
+    </div>
+    <div class="kpi-card expense">
+      <div class="kpi-label">本月支出</div>
+      <div class="kpi-value" id="kpi-expense">$0</div>
+      <div class="kpi-sub" id="kpi-expense-sub">—</div>
+    </div>
+    <div class="kpi-card profit">
+      <div class="kpi-label">本月結餘</div>
+      <div class="kpi-value" id="kpi-profit">$0</div>
+      <div class="kpi-sub" id="kpi-profit-sub">—</div>
+    </div>
+    <div class="kpi-card insurance">
+      <div class="kpi-label">勞健保負擔</div>
+      <div class="kpi-value" id="kpi-insurance">$0</div>
+      <div class="kpi-sub">雇主負擔估算</div>
+    </div>
+  </div>
+
+  <div class="section-title">收入結構</div>
+  <div class="breakdown-list" id="income-breakdown"></div>
+
+  <div class="section-title">支出結構</div>
+  <div class="breakdown-list" id="expense-breakdown"></div>
+
+  <div class="section-title">近期記錄</div>
+  <div id="recent-records"></div>
+</div>
+
+<!-- Income page -->
+<div class="page" id="page-income">
+  <div class="section-title">新增收入</div>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>日期</label>
+        <input type="date" id="inc-date">
+      </div>
+      <div class="form-group">
+        <label>金額 (NT$)</label>
+        <input type="number" id="inc-amount" placeholder="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>類別</label>
+        <select id="inc-cat">
+          <option value="居家復健自費">居家復健自費</option>
+          <option value="課後班學費">課後班學費</option>
+          <option value="團體課程">團體課程</option>
+          <option value="日照中心">日照中心</option>
+          <option value="健保申報">健保申報</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>付款方式</label>
+        <select id="inc-pay">
+          <option value="現金">現金</option>
+          <option value="轉帳">轉帳</option>
+          <option value="刷卡">刷卡</option>
+          <option value="健保">健保</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group full">
+        <label>備註</label>
+        <input type="text" id="inc-note" placeholder="案主姓名、課程名稱...">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="addRecord('income')">＋ 新增收入</button>
+    </div>
+  </div>
+
+  <div class="section-title">收入記錄</div>
+  <div class="records-wrap">
+    <table class="records-table" id="income-table">
+      <thead>
+        <tr><th>日期</th><th>類別</th><th>金額</th><th>備註</th><th></th></tr>
+      </thead>
+      <tbody id="income-tbody"></tbody>
+    </table>
+  </div>
+  <div id="income-empty" class="empty" style="display:none">尚無收入記錄</div>
+</div>
+
+<!-- Expense page -->
+<div class="page" id="page-expense">
+  <div class="section-title">新增支出</div>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>日期</label>
+        <input type="date" id="exp-date">
+      </div>
+      <div class="form-group">
+        <label>金額 (NT$)</label>
+        <input type="number" id="exp-amount" placeholder="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>類別</label>
+        <select id="exp-cat">
+          <option value="薪資">薪資</option>
+          <option value="勞保">勞保</option>
+          <option value="健保">健保</option>
+          <option value="房租/房貸">房租/房貸</option>
+          <option value="耗材設備">耗材設備</option>
+          <option value="外包費用">外包費用</option>
+          <option value="行銷費用">行銷費用</option>
+          <option value="水電">水電</option>
+          <option value="交通">交通</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>週期</label>
+        <select id="exp-cycle">
+          <option value="單次">單次</option>
+          <option value="每月固定">每月固定</option>
+          <option value="季度">季度</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group full">
+        <label>備註</label>
+        <input type="text" id="exp-note" placeholder="說明...">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="addRecord('expense')" style="background:var(--rust)">＋ 新增支出</button>
+    </div>
+  </div>
+
+  <div class="section-title">支出記錄</div>
+  <div class="records-wrap">
+    <table class="records-table" id="expense-table">
+      <thead>
+        <tr><th>日期</th><th>類別</th><th>金額</th><th>備註</th><th></th></tr>
+      </thead>
+      <tbody id="expense-tbody"></tbody>
+    </table>
+  </div>
+  <div id="expense-empty" class="empty" style="display:none">尚無支出記錄</div>
+</div>
+
+<!-- Insurance page -->
+<div class="page" id="page-insurance">
+  <div class="section-title">勞健保試算</div>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>員工月投保薪資 (NT$)</label>
+        <input type="number" id="ins-salary" placeholder="例：30000" oninput="calcInsurance()">
+      </div>
+      <div class="form-group">
+        <label>員工人數</label>
+        <input type="number" id="ins-count" value="1" min="1" oninput="calcInsurance()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>雇主類型</label>
+        <select id="ins-type" onchange="calcInsurance()">
+          <option value="company">公司/法人</option>
+          <option value="personal">個人事業主</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">試算結果（每人每月）</div>
+  <div class="insurance-card" id="insurance-result">
+    <div class="insurance-row">
+      <span class="label">勞保 — 雇主負擔 (70%)</span>
+      <span class="val" id="ins-labor-employer">—</span>
+    </div>
+    <div class="insurance-row">
+      <span class="label">勞保 — 員工負擔 (20%)</span>
+      <span class="val" id="ins-labor-employee">—</span>
+    </div>
+    <div class="insurance-row">
+      <span class="label">健保 — 雇主負擔 (60%)</span>
+      <span class="val" id="ins-health-employer">—</span>
+    </div>
+    <div class="insurance-row">
+      <span class="label">健保 — 員工負擔 (30%)</span>
+      <span class="val" id="ins-health-employee">—</span>
+    </div>
+    <div class="insurance-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:12px">
+      <span class="label" style="font-weight:500;color:var(--ink)">每月雇主總負擔</span>
+      <span class="val" style="color:#3a5a80;font-size:16px" id="ins-total-employer">—</span>
+    </div>
+    <div class="insurance-row">
+      <span class="label">全員雇主總負擔</span>
+      <span class="val" style="color:#3a5a80" id="ins-total-all">—</span>
+    </div>
+  </div>
+
+  <div class="section-title">勞健保記錄</div>
+  <div class="records-wrap">
+    <table class="records-table">
+      <thead>
+        <tr><th>月份</th><th>勞保(雇主)</th><th>健保(雇主)</th><th>合計</th><th>狀態</th></tr>
+      </thead>
+      <tbody id="insurance-tbody"></tbody>
+    </table>
+  </div>
+  <div style="margin-top:12px">
+    <button class="btn btn-primary" onclick="logInsurance()">記錄本月勞健保支出</button>
+  </div>
+</div>
+
+<!-- AI page -->
+<div class="page" id="page-ai">
+  <div class="section-title" style="margin-bottom:8px">AI 財務顧問</div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:12px">根據你輸入的財務資料，提供分析與建議。</p>
+
+  <div class="ai-section">
+    <div class="ai-header">
+      <div class="ai-dot"></div>
+      <div class="ai-title">QIYU FINANCE · AI ADVISOR</div>
+    </div>
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg bot">
+        <div class="ai-avatar">🌿</div>
+        <div class="ai-bubble">你好！我是祈癒的AI財務顧問。我可以根據你記錄的收支資料，幫你分析財務狀況、計算勞健保、評估課程成本效益、或回答任何財務相關問題。</div>
+      </div>
+    </div>
+    <div class="quick-asks">
+      <button class="quick-btn" onclick="quickAsk('本月財務狀況如何？')">本月財務狀況</button>
+      <button class="quick-btn" onclick="quickAsk('勞健保雇主負擔怎麼算？')">勞健保計算</button>
+      <button class="quick-btn" onclick="quickAsk('課後班課程是否有獲利？')">課程損益分析</button>
+      <button class="quick-btn" onclick="quickAsk('有哪些可以節稅的方式？')">節稅建議</button>
+      <button class="quick-btn" onclick="quickAsk('幫我分析收支比例是否健康？')">收支健康度</button>
+    </div>
+    <div class="ai-input-area">
+      <input class="ai-input" id="ai-input" placeholder="詢問財務問題..." onkeydown="if(event.key==='Enter')sendAI()">
+      <button class="ai-send" onclick="sendAI()">→</button>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="dept-screen" id="dept-admin">
+  <div class="dept-header">
+    <button class="dept-back" onclick="showHub()">&#8592;</button>
+    <div><div class="dept-header-title">&#x6587;&#x66F8;&#x884C;&#x653F;&#x90E8;</div><div class="dept-header-sub" style="color:var(--amber-mid)">DOCUMENT &middot; ADMIN &middot; ACCREDITATION</div></div>
+  </div>
+  <div class="dept-nav" id="adm-nav">
+    <div class="nav-tab active" onclick="admNav('scan',this)">&#x1F4F7; &#x62CD;&#x7167;&#x4E0A;&#x50B3;</div>
+    <div class="nav-tab" onclick="admNav('docs',this)">&#x1F4C1; &#x516C;&#x6587;&#x6A94;&#x6848;</div>
+    <div class="nav-tab" onclick="admNav('alerts',this)">&#x1F514; &#x5F85;&#x8FA6;&#x6A19;&#x8A18;</div>
+    <div class="nav-tab" onclick="admNav('notes',this)">&#x1F4DD; &#x8A18;&#x4E8B;&#x672C;</div>
+    <div class="nav-tab" onclick="admNav('accred',this)">&#x1F3C5; &#x8A55;&#x9451;&#x8CC7;&#x6599;</div>
+  </div>
+  <div class="dept-body">
+<div class="page" id="adm-page-scan">
+  <div class="sec">拍照 / 上傳公文</div>
+
+  <div class="upload-zone" id="upload-zone">
+    <input type="file" id="file-input" accept="image/*" multiple capture="environment" onchange="handleFiles(this.files)">
+    <div class="upload-icon">📷</div>
+    <div class="upload-label">點擊拍照或選擇圖片</div>
+    <div class="upload-sub">支援多張｜JPG、PNG｜也可直接從相簿選取</div>
+  </div>
+
+  <div class="img-preview-grid" id="preview-grid"></div>
+
+  <div class="form-group full" style="margin-bottom:12px">
+    <label>公文標題（可選，AI會自動判斷）</label>
+    <input type="text" id="doc-title-input" placeholder="例：113年度評鑒通知公文">
+  </div>
+  <div class="form-row" style="margin-bottom:12px">
+    <div class="form-group">
+      <label>文件類別</label>
+      <select id="doc-cat">
+        <option value="公文通知">公文通知</option>
+        <option value="評鑒文件">評鑒文件</option>
+        <option value="合約協議">合約協議</option>
+        <option value="財務單據">財務單據</option>
+        <option value="人事資料">人事資料</option>
+        <option value="課程教案">課程教案</option>
+        <option value="其他">其他</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>緊急程度</label>
+      <select id="doc-urgency">
+        <option value="一般">一般</option>
+        <option value="重要">重要</option>
+        <option value="緊急">緊急</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-analyze" id="analyze-btn" onclick="analyzeDoc()" disabled>
+      <span id="analyze-btn-inner">🤖 AI 分析公文</span>
+    </button>
+    <button class="btn btn-amber" onclick="saveDoc()" id="save-btn" style="display:none">💾 儲存文件</button>
+  </div>
+
+  <div style="margin-top:16px" id="ai-result-wrap" style="display:none">
+    <div class="sec">AI 分析結果</div>
+    <div class="ai-result">
+      <div class="ai-result-header">
+        <div class="ai-dot"></div>
+        <div class="ai-result-title">DOCUMENT ANALYSIS</div>
+      </div>
+      <div class="ai-result-body empty" id="ai-result-body">上傳文件後點擊「AI 分析公文」</div>
+    </div>
+
+    <div id="ai-alerts-wrap" style="display:none">
+      <div class="sec" style="margin-top:16px">注意事項</div>
+      <div class="alert-list" id="ai-alert-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Docs page -->
+<div class="page" id="adm-page-docs">
+  <div class="sec">公文檔案庫</div>
+  <div id="doc-list" class="doc-list"></div>
+  <div id="doc-empty" class="empty">尚無公文記錄，請先上傳並儲存文件</div>
+</div>
+
+<!-- Alerts page -->
+<div class="page" id="adm-page-alerts">
+  <div class="sec">待辦標記</div>
+  <div id="alert-list-main" class="alert-list"></div>
+  <div id="alert-empty" class="empty" style="display:none">目前沒有待辦事項 ✓</div>
+
+  <div class="sec" style="margin-top:20px">手動新增待辦</div>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>標題</label>
+        <input type="text" id="alert-title" placeholder="待辦事項">
+      </div>
+      <div class="form-group">
+        <label>優先程度</label>
+        <select id="alert-level">
+          <option value="high">緊急</option>
+          <option value="medium">重要</option>
+          <option value="low">一般</option>
+          <option value="info">資訊</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group full" style="margin-bottom:10px">
+      <label>說明</label>
+      <textarea id="alert-desc" placeholder="詳細說明..."></textarea>
+    </div>
+    <button class="btn btn-amber" onclick="addManualAlert()">＋ 新增待辦</button>
+  </div>
+</div>
+
+<!-- Notes page -->
+<div class="page" id="adm-page-notes">
+  <div class="sec">記事本</div>
+
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>標題</label>
+        <input type="text" id="note-title" placeholder="記事標題">
+      </div>
+      <div class="form-group">
+        <label>類別</label>
+        <select id="note-cat">
+          <option value="公文追蹤">公文追蹤</option>
+          <option value="評鑒準備">評鑒準備</option>
+          <option value="行政事務">行政事務</option>
+          <option value="人事">人事</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group full" style="margin-bottom:10px">
+      <label>內容</label>
+      <textarea id="note-content" placeholder="記下重要事項..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>釘選</label>
+        <select id="note-pin">
+          <option value="0">否</option>
+          <option value="1">釘選置頂</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-amber" onclick="addNote()">＋ 新增記事</button>
+  </div>
+
+  <div class="note-grid" id="note-grid"></div>
+  <div id="note-empty" class="empty">尚無記事</div>
+</div>
+
+<!-- Accreditation page -->
+<div class="page" id="adm-page-accred">
+  <div class="sec">評鑒資料管理</div>
+
+  <div class="accred-grid">
+    <div class="accred-card" onclick="openAccredCat('服務品質')">
+      <div class="accred-icon">⭐</div>
+      <div class="accred-title">服務品質</div>
+      <div class="accred-sub">案主滿意度、服務記錄</div>
+      <div class="accred-count" id="ac-count-服務品質">0 份文件</div>
+      <div class="progress-wrap"><div class="progress-bar" id="ac-bar-服務品質" style="width:0%"></div></div>
+    </div>
+    <div class="accred-card" onclick="openAccredCat('人員資格')">
+      <div class="accred-icon">🎓</div>
+      <div class="accred-title">人員資格</div>
+      <div class="accred-sub">證照、繼續教育時數</div>
+      <div class="accred-count" id="ac-count-人員資格">0 份文件</div>
+      <div class="progress-wrap"><div class="progress-bar" id="ac-bar-人員資格" style="width:0%"></div></div>
+    </div>
+    <div class="accred-card" onclick="openAccredCat('環境設備')">
+      <div class="accred-icon">🏥</div>
+      <div class="accred-title">環境設備</div>
+      <div class="accred-sub">場域照片、設備清單</div>
+      <div class="accred-count" id="ac-count-環境設備">0 份文件</div>
+      <div class="progress-wrap"><div class="progress-bar" id="ac-bar-環境設備" style="width:0%"></div></div>
+    </div>
+    <div class="accred-card" onclick="openAccredCat('行政管理')">
+      <div class="accred-icon">📋</div>
+      <div class="accred-title">行政管理</div>
+      <div class="accred-sub">規章制度、會議紀錄</div>
+      <div class="accred-count" id="ac-count-行政管理">0 份文件</div>
+      <div class="progress-wrap"><div class="progress-bar" id="ac-bar-行政管理" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="sec">快速上傳評鑒文件</div>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>類別</label>
+        <select id="accred-cat">
+          <option>服務品質</option>
+          <option>人員資格</option>
+          <option>環境設備</option>
+          <option>行政管理</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>評鑒年度</label>
+        <select id="accred-year">
+          <option>113</option>
+          <option>114</option>
+          <option>115</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group full" style="margin-bottom:10px">
+      <label>文件名稱</label>
+      <input type="text" id="accred-docname" placeholder="例：職能治療師證照影本">
+    </div>
+    <div class="form-group full" style="margin-bottom:10px">
+      <label>備註 / 說明</label>
+      <textarea id="accred-note" placeholder="備注到期日、注意事項..."></textarea>
+    </div>
+    <button class="btn btn-amber" onclick="addAccredDoc()">＋ 加入評鑒資料</button>
+  </div>
+
+  <div class="sec">評鑒文件清單</div>
+  <div id="accred-list" class="doc-list"></div>
+  <div id="accred-empty" class="empty">尚無評鑒文件</div>
+</div>
+
+  </div>
+</div>
+
+
+<div class="dept-screen" id="dept-systems" style="background:#0f0e0c;min-height:100vh;">
+  <div class="sys-header">
+    <button class="sys-back" onclick="showHub()">&#8592;</button>
+    <div>
+      <div class="sys-title">&#x1F5C2; &#x73FE;&#x6709;&#x7CFB;&#x7D71;</div>
+      <div class="sys-sub">SYSTEMS &middot; LAUNCHER</div>
+    </div>
+  </div>
+  <div class="sys-body">
+    <div class="sys-group-title">&#x1F4CB; &#x884C;&#x653F;&#x7BA1;&#x7406;&#x7CFB;&#x7D71;</div>
+    <div class="sys-grid">
+      <a class="sys-card" href="https://cguot038-ctrl.github.io/holiday-camp/admin.html" target="_blank">
+        <div class="sys-card-icon" style="background:rgba(58,122,80,.2)">&#x26FA;</div>
+        <div class="sys-card-info">
+          <div class="sys-card-name">&#x5047;&#x65E5;&#x71DF;&#x968A; &#x7BA1;&#x7406;&#x5F8C;&#x53F0;</div>
+          <div class="sys-card-desc">&#x73ED;&#x5225;&#x7BA1;&#x7406;&#x3001;&#x5831;&#x540D;&#x5BE9;&#x6838;&#x3001;&#x7E73;&#x8CBB;&#x8FFD;&#x8E64;&#x3001;&#x7DCA;&#x6025;&#x901A;&#x5831;&#x3001;&#x85AA;&#x8CC7;&#x8A18;&#x9304;</div>
+          <div class="sys-card-tags">
+            <span class="sys-tag">holiday-camp</span>
+            <span class="sys-tag">Supabase</span>
+            <span class="sys-tag">admin.html</span>
+          </div>
+        </div>
+        <div class="sys-status-dot dot-live"></div>
+        <div class="sys-arrow">&#x2197;</div>
+      </a>
+
+      <a class="sys-card" href="https://cguot038-ctrl.github.io/Rehab/" target="_blank">
+        <div class="sys-card-icon" style="background:rgba(80,50,120,.2)">&#x1F3E5;</div>
+        <div class="sys-card-info">
+          <div class="sys-card-name">&#x5C45;&#x5BB6;&#x5FA9;&#x5065; &#x7BA1;&#x7406;&#x7CFB;&#x7D71;</div>
+          <div class="sys-card-desc">&#x500B;&#x6848;&#x8A18;&#x9304;&#x3001;&#x6CBB;&#x7642;&#x7D00;&#x9304;&#x3001;CSMS&#x532F;&#x51FA;&#x3001;Word/PDF&#x532F;&#x5165;</div>
+          <div class="sys-card-tags">
+            <span class="sys-tag">Rehab</span>
+            <span class="sys-tag">&#x9577;&#x7167;&#x7533;&#x5831;</span>
+          </div>
+        </div>
+        <div class="sys-status-dot dot-live"></div>
+        <div class="sys-arrow">&#x2197;</div>
+      </a>
+    </div>
+    <div class="sys-grid">
+
+      <a class="sys-card" href="https://cguot038-ctrl.github.io/holiday-camp/" target="_blank">
+        <div class="sys-card-icon" style="background:rgba(58,122,80,.15)">&#x1F4DD;</div>
+        <div class="sys-card-info">
+          <div class="sys-card-name">&#x5047;&#x65E5;&#x71DF;&#x968A; &#x5BB6;&#x5C6C;&#x5831;&#x540D;&#x7AEF;</div>
+          <div class="sys-card-desc">&#x5BB6;&#x5C6C;&#x81EA;&#x884C;&#x5831;&#x540D;&#x3001;&#x85E5;&#x7269;&#x6388;&#x6B0A;&#x7C3D;&#x540D;&#xFF08;&#x5BB6;&#x5C6C;&#x7AEF;&#xFF0C;&#x52FF;&#x4FEE;&#x6539;&#xFF09;</div>
+          <div class="sys-card-tags">
+            <span class="sys-tag">&#x5BB6;&#x5C6C;&#x7AEF;</span>
+            <span class="sys-tag">holiday-camp</span>
+          </div>
+        </div>
+        <div class="sys-status-dot dot-live"></div>
+        <div class="sys-arrow">&#x2197;</div>
+      </a>
+    </div>
+    <div style="margin-top:24px;padding:14px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.06);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:#555;letter-spacing:1px;margin-bottom:6px;">&#x5982;&#x4F55;&#x65B0;&#x589E;&#x7CFB;&#x7D71;</div>
+      <div style="font-size:11px;color:#555;line-height:1.8;">1. &#x628A;&#x65B0;&#x7CFB;&#x7D71; HTML &#x4E0A;&#x50B3;&#x5230;&#x540C;&#x4E00;&#x500B; GitHub repo<br>2. &#x8ACB; Claude &#x5728;&#x6B64;&#x6E05;&#x55AE;&#x65B0;&#x589E;&#x4E00;&#x5F35;&#x5361;&#x7247;<br>3. &#x8A2D;&#x5B9A; href &#x70BA;&#x5C0D;&#x61C9;&#x6A94;&#x540D;&#x6216;&#x7DB2;&#x5740;</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ HUB ════════════════════════════════════════════════════════
+const HUB_DEPTS = [
+  {id:'node-finance',  angle:330, dist:195},
+  {id:'node-admin',    angle: 30, dist:195},
+  {id:'node-systems',  angle: 90, dist:205},
+  {id:'node-curriculum',angle:150,dist:195},
+  {id:'node-marketing',angle:210, dist:195},
+  {id:'node-tech',     angle:270, dist:195}
+];
+const HUB_COLORS = {
+  'node-finance':'#3a6449','node-admin':'#8c5a28','node-systems':'#806010',
+  'node-curriculum':'#3a5080','node-marketing':'#8c3a64','node-tech':'#286080'
+};
+const nodePos={};
+let hubPanX=0,hubPanY=0,isDragging=false,dragStart={x:0,y:0},dragNode=null,dragOff={mx:0,my:0};
+function vw(){return window.innerWidth;} function vh(){return window.innerHeight;}
+
+function hubPlace(){
+  HUB_DEPTS.forEach(d=>{
+    if(!nodePos[d.id]){
+      const r=(d.angle-90)*Math.PI/180;
+      nodePos[d.id]={x:Math.cos(r)*d.dist,y:Math.sin(r)*d.dist};
+    }
+    const p=nodePos[d.id];
+    const el=document.getElementById(d.id);
+    if(el){el.style.left=(vw()/2+p.x+hubPanX)+'px';el.style.top=(vh()/2+p.y+hubPanY)+'px';}
+  });
+  hubDrawLines();
+}
+function hubDrawLines(){
+  const svg=document.getElementById('hub-canvas');
+  svg.setAttribute('width',vw());svg.setAttribute('height',vh());
+  const cx=vw()/2+hubPanX,cy=vh()/2+hubPanY;
+  svg.innerHTML=HUB_DEPTS.map(d=>{
+    const p=nodePos[d.id];if(!p)return'';
+    const nx=vw()/2+p.x+hubPanX,ny=vh()/2+p.y+hubPanY,col=HUB_COLORS[d.id]||'#555',mx=(cx+nx)/2;
+    return '<path d="M'+cx+','+cy+' Q'+mx+','+cy+' '+nx+','+ny+'" stroke="'+col+'" stroke-width="1.5" fill="none" opacity="0.45" stroke-dasharray="4,6"/><circle cx="'+nx+'" cy="'+ny+'" r="3" fill="'+col+'" opacity="0.4"/>';
+  }).join('');
+}
+const hubMap=document.getElementById('hub-map');
+hubMap.addEventListener('pointerdown',function(e){
+  var n=e.target.closest('.dept-node');
+  if(n){
+    // Node drag: only start if it's a long-ish move, not a tap
+    dragNode=n;
+    var p=nodePos[n.id];
+    dragOff={mx:e.clientX-(vw()/2+p.x+hubPanX),my:e.clientY-(vh()/2+p.y+hubPanY)};
+    return; // don't capture - let touch events handle taps
+  }
+  isDragging=true;dragStart={x:e.clientX-hubPanX,y:e.clientY-hubPanY};
+  hubMap.setPointerCapture(e.pointerId);
+});
+hubMap.addEventListener('pointermove',function(e){
+  if(dragNode){
+    var p=nodePos[dragNode.id];
+    p.x=e.clientX-dragOff.mx-vw()/2-hubPanX;
+    p.y=e.clientY-dragOff.my-vh()/2-hubPanY;
+    hubPlace();return;
+  }
+  if(!isDragging)return;
+  hubPanX=e.clientX-dragStart.x;hubPanY=e.clientY-dragStart.y;hubPlace();
+});
+hubMap.addEventListener('pointerup',function(){isDragging=false;dragNode=null;});
+hubMap.addEventListener('touchstart',function(e){
+  if(e.target.closest('.dept-node'))return; // let node handle it
+  var t=e.touches[0];isDragging=true;dragStart={x:t.clientX-hubPanX,y:t.clientY-hubPanY};
+},{passive:true});
+hubMap.addEventListener('touchmove',function(e){
+  if(!isDragging)return;
+  var t=e.touches[0];hubPanX=t.clientX-dragStart.x;hubPanY=t.clientY-dragStart.y;hubPlace();
+},{passive:true});
+hubMap.addEventListener('touchend',function(){isDragging=false;});
+
+document.querySelectorAll('.dept-node').forEach(function(el){
+  var tapStart={x:0,y:0,t:0};
+
+  // Use both touch and pointer for maximum iOS compatibility
+  function onStart(x,y){tapStart={x:x,y:y,t:Date.now()};}
+  function onEnd(x,y){
+    var dx=Math.abs(x-tapStart.x),dy=Math.abs(y-tapStart.y),dt=Date.now()-tapStart.t;
+    if(dx>10||dy>10||dt>500)return; // was a drag, not a tap
+    var dept=el.dataset.dept;
+    if(el.dataset.status==='active'&&dept){
+      showDept(dept);
+    } else {
+      document.getElementById('hub-modal-icon').textContent=el.dataset.modalIcon||'🚧';
+      document.getElementById('hub-modal-title').textContent=el.dataset.modalTitle||'建置中';
+      document.getElementById('hub-modal-desc').textContent=el.dataset.modalDesc||'規劃中。';
+      document.getElementById('hub-modal').classList.add('show');
+    }
+  }
+
+  el.addEventListener('touchstart',function(e){
+    var t=e.touches[0];onStart(t.clientX,t.clientY);
+  },{passive:true});
+  el.addEventListener('touchend',function(e){
+    e.preventDefault();
+    var t=e.changedTouches[0];onEnd(t.clientX,t.clientY);
+  },{passive:false});
+
+  // Fallback for non-touch
+  el.addEventListener('mousedown',function(e){onStart(e.clientX,e.clientY);});
+  el.addEventListener('mouseup',function(e){onEnd(e.clientX,e.clientY);});
+});
+function hubCloseModal(){document.getElementById('hub-modal').classList.remove('show');}
+function showHub(){
+  document.getElementById('screen-hub').classList.remove('hidden');
+  document.querySelectorAll('.dept-screen').forEach(function(s){s.classList.remove('active');});
+  document.body.style.overflow='';
+}
+function showDept(id){
+  document.getElementById('screen-hub').classList.add('hidden');
+  document.querySelectorAll('.dept-screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('dept-'+id).classList.add('active');
+  document.body.style.overflow='auto';
+  if(id==='finance'){renderDashboard();renderInsuranceHistory();}
+  if(id==='admin'){renderAlerts();renderNotes();renderAccred();}
+}
+window.addEventListener('resize',hubPlace);
+
+// ═══ SHARED ═════════════════════════════════════════════════════
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
+
+// ═══ FINANCE NAV ════════════════════════════════════════════════
+function finNav(id,tabEl){
+  document.querySelectorAll('#dept-finance .page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('#fin-nav .nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('page-'+id).classList.add('active');
+  if(tabEl)tabEl.classList.add('active');
+  if(id==='dashboard')renderDashboard();
+  if(id==='income')renderTable('income');
+  if(id==='expense')renderTable('expense');
+}
+
+// ═══ FINANCE JS ═════════════════════════════════════════════════
+// ── State ──────────────────────────────────────
+let records = JSON.parse(localStorage.getItem('qiyu_records') || '[]');
+let currentMonth = new Date().toISOString().slice(0,7); // "2025-05"
+let insCache = { laborE:0, healthE:0, perPerson:0, count:1 };
+
+function save() {
+  localStorage.setItem('qiyu_records', JSON.stringify(records));
+}
+
+// ── Navigation ─────────────────────────────────
+
+// ── Month navigation ───────────────────────────
+function changeMonth(dir) {
+  let [y,m] = currentMonth.split('-').map(Number);
+  m += dir;
+  if(m>12){m=1;y++;}
+  if(m<1){m=12;y--;}
+  currentMonth = `${y}-${String(m).padStart(2,'0')}`;
+  renderDashboard();
+}
+
+function fmtMonth(ym) {
+  const [y,m] = ym.split('-');
+  return `${y}年${parseInt(m)}月`;
+}
+
+// ── Formatting ─────────────────────────────────
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+
+// ── Records ────────────────────────────────────
+function addRecord(type) {
+  const date = document.getElementById(type==='income'?'inc-date':'exp-date').value;
+  const amount = parseFloat(document.getElementById(type==='income'?'inc-amount':'exp-amount').value);
+  const cat = document.getElementById(type==='income'?'inc-cat':'exp-cat').value;
+  const note = document.getElementById(type==='income'?'inc-note':'exp-note').value;
+
+  if(!date||!amount||amount<=0) { showToast('請填寫日期與金額'); return; }
+
+  records.push({ id: Date.now(), type, date, amount, cat, note,
+    pay: document.getElementById('inc-pay')?.value||'',
+    cycle: document.getElementById('exp-cycle')?.value||''
+  });
+  save();
+  renderTable(type);
+  showToast(type==='income'?'✓ 收入已新增':'✓ 支出已新增');
+
+  // clear
+  document.getElementById(type==='income'?'inc-amount':'exp-amount').value='';
+  document.getElementById(type==='income'?'inc-note':'exp-note').value='';
+}
+
+function deleteRecord(id) {
+  records = records.filter(r=>r.id!==id);
+  save();
+  renderDashboard();
+  renderTable('income');
+  renderTable('expense');
+}
+
+// ── Dashboard ──────────────────────────────────
+function renderDashboard() {
+  const ym = currentMonth;
+  document.getElementById('dashMonthLabel').textContent = fmtMonth(ym);
+  document.getElementById('headerMonth').textContent = fmtMonth(ym);
+
+  const monthRecs = records.filter(r=>r.date.startsWith(ym));
+  const income = monthRecs.filter(r=>r.type==='income');
+  const expense = monthRecs.filter(r=>r.type==='expense');
+
+  const totalIncome = income.reduce((s,r)=>s+r.amount,0);
+  const totalExpense = expense.reduce((s,r)=>s+r.amount,0);
+  const profit = totalIncome - totalExpense;
+
+  document.getElementById('kpi-income').textContent = fmt(totalIncome);
+  document.getElementById('kpi-expense').textContent = fmt(totalExpense);
+  document.getElementById('kpi-profit').textContent = fmt(profit);
+  document.getElementById('kpi-profit').className = 'kpi-value ' + (profit>=0?'profit-positive':'profit-negative');
+
+  document.getElementById('kpi-income-sub').textContent = `${income.length} 筆`;
+  document.getElementById('kpi-expense-sub').textContent = `${expense.length} 筆`;
+  document.getElementById('kpi-profit-sub').textContent = totalIncome>0 ? `利潤率 ${((profit/totalIncome)*100).toFixed(0)}%` : '—';
+  document.getElementById('kpi-insurance').textContent = fmt(insCache.perPerson * insCache.count);
+
+  // Breakdown
+  renderBreakdown('income', income, totalIncome, 'income-breakdown', '#4a7c59');
+  renderBreakdown('expense', expense, totalExpense, 'expense-breakdown', '#c0522a');
+
+  // Recent
+  const recent = [...records].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  const recentEl = document.getElementById('recent-records');
+  if(recent.length===0){recentEl.innerHTML='<div class="empty">尚無記錄</div>';return;}
+  recentEl.innerHTML = `<div class="records-wrap"><table class="records-table"><thead><tr><th>日期</th><th>類別</th><th>金額</th><th>備註</th></tr></thead><tbody>
+    ${recent.map(r=>`<tr>
+      <td>${r.date.slice(5)}</td>
+      <td><span class="tag tag-${r.type==='income'?'income':'expense'}">${r.cat}</span></td>
+      <td class="${r.type==='income'?'amount-income':'amount-expense'}">${r.type==='income'?'+':'-'}${fmt(r.amount)}</td>
+      <td style="color:var(--muted)">${r.note||'—'}</td>
+    </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function renderBreakdown(type, recs, total, elId, color) {
+  const bycat = {};
+  recs.forEach(r=>{ bycat[r.cat]=(bycat[r.cat]||0)+r.amount; });
+  const cats = Object.entries(bycat).sort((a,b)=>b[1]-a[1]);
+  const el = document.getElementById(elId);
+  if(cats.length===0){el.innerHTML='<div class="empty">無資料</div>';return;}
+  el.innerHTML = cats.map(([cat,amt])=>`
+    <div class="breakdown-item">
+      <div class="breakdown-dot" style="background:${color}"></div>
+      <div class="breakdown-name">${cat}</div>
+      <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="background:${color};width:${total>0?((amt/total)*100).toFixed(0):0}%"></div></div>
+      <div class="breakdown-amount" style="color:${color}">${fmt(amt)}</div>
+    </div>`).join('');
+}
+
+// ── Tables ─────────────────────────────────────
+function renderTable(type) {
+  const tbody = document.getElementById(type+'-tbody');
+  const empty = document.getElementById(type+'-empty');
+  const table = document.getElementById(type+'-table');
+  const recs = records.filter(r=>r.type===type).sort((a,b)=>b.date.localeCompare(a.date));
+  if(recs.length===0){
+    table.style.display='none'; empty.style.display='block';
+  } else {
+    table.style.display=''; empty.style.display='none';
+    tbody.innerHTML = recs.map(r=>`<tr>
+      <td>${r.date}</td>
+      <td><span class="tag tag-${type==='income'?'income':'expense'}">${r.cat}</span></td>
+      <td class="${type==='income'?'amount-income':'amount-expense'}">${fmt(r.amount)}</td>
+      <td style="color:var(--muted);font-size:12px">${r.note||'—'}</td>
+      <td><button class="del-btn" onclick="deleteRecord(${r.id})">✕</button></td>
+    </tr>`).join('');
+  }
+}
+
+// ── Insurance calc ─────────────────────────────
+function calcInsurance() {
+  const salary = parseFloat(document.getElementById('ins-salary').value)||0;
+  const count = parseInt(document.getElementById('ins-count').value)||1;
+  if(salary===0) return;
+
+  // Labor insurance (勞保): rate ~10.5%, employer 70%
+  const laborTotal = salary * 0.105;
+  const laborE = laborTotal * 0.7;
+  const laborW = laborTotal * 0.2;
+
+  // Health insurance (健保): ~5.17%, employer 60%
+  const healthTotal = salary * 0.0517;
+  const healthE = healthTotal * 0.6;
+  const healthW = healthTotal * 0.3;
+
+  const totalE = laborE + healthE;
+
+  document.getElementById('ins-labor-employer').textContent = fmt(laborE);
+  document.getElementById('ins-labor-employee').textContent = fmt(laborW);
+  document.getElementById('ins-health-employer').textContent = fmt(healthE);
+  document.getElementById('ins-health-employee').textContent = fmt(healthW);
+  document.getElementById('ins-total-employer').textContent = fmt(totalE);
+  document.getElementById('ins-total-all').textContent = fmt(totalE * count) + ` (${count}人)`;
+
+  insCache = { laborE, healthE, perPerson: totalE, count };
+  document.getElementById('kpi-insurance').textContent = fmt(totalE*count);
+}
+
+function logInsurance() {
+  if(insCache.perPerson===0){showToast('請先填寫投保薪資');return;}
+  const today = new Date().toISOString().slice(0,10);
+  records.push({id:Date.now(), type:'expense', date:today, amount:insCache.perPerson*insCache.count, cat:'勞健保', note:'雇主負擔（自動試算）', cycle:'每月固定'});
+  save();
+  showToast('✓ 已記錄本月勞健保支出');
+
+  // Generate insurance table
+  renderInsuranceHistory();
+}
+
+function renderInsuranceHistory() {
+  const recs = records.filter(r=>r.cat==='勞健保').sort((a,b)=>b.date.localeCompare(a.date));
+  const tbody = document.getElementById('insurance-tbody');
+  if(recs.length===0){tbody.innerHTML='<tr><td colspan="5" class="empty">尚無記錄</td></tr>';return;}
+  tbody.innerHTML = recs.map(r=>`<tr>
+    <td>${r.date.slice(0,7)}</td>
+    <td>${fmt(r.amount*0.6)}</td>
+    <td>${fmt(r.amount*0.4)}</td>
+    <td class="amount-expense">${fmt(r.amount)}</td>
+    <td><span class="tag" style="background:#dce6f0;color:#3a5a80">已記錄</span></td>
+  </tr>`).join('');
+}
+
+// ── AI advisor ─────────────────────────────────
+function getFinancialContext() {
+  const now = new Date().toISOString().slice(0,7);
+  const monthRecs = records.filter(r=>r.date.startsWith(now));
+  const income = monthRecs.filter(r=>r.type==='income').reduce((s,r)=>s+r.amount,0);
+  const expense = monthRecs.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
+
+  const byCat = {};
+  records.forEach(r=>{
+    if(!byCat[r.cat]) byCat[r.cat]={income:0,expense:0};
+    byCat[r.cat][r.type]+=r.amount;
+  });
+
+  return `你是祈癒職能治療所的AI財務顧問，請用繁體中文回答，語氣專業親切。
+診所資訊：職能治療診所，桃園市平鎮區，服務包含居家復健、課後班、團體課程，與對茗日照中心合作。
+本月財務資料 (${fmtMonth(now)})：
+- 總收入：NT$${income.toLocaleString()}
+- 總支出：NT$${expense.toLocaleString()}
+- 結餘：NT$${(income-expense).toLocaleString()}
+- 收入來源：居家復健自費、課後班學費、健保申報
+- 支出項目：薪資、勞健保、房租/房貸、耗材、行銷
+- 勞健保雇主估算：NT$${(insCache.perPerson*insCache.count).toLocaleString()}/月
+歷史收入記錄筆數：${records.filter(r=>r.type==='income').length}筆
+歷史支出記錄筆數：${records.filter(r=>r.type==='expense').length}筆
+請根據以上資料回答用戶問題，如資料不足請說明，並給出實用建議。回答控制在200字以內。`;
+}
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value='';
+
+  appendMsg('user', msg);
+  const loadingId = appendMsg('bot', '<span class="loading-dots">思考中</span>');
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        system: getFinancialContext(),
+        messages:[{role:'user',content:msg}]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content?.[0]?.text || '無法取得回應';
+    updateMsg(loadingId, text);
+  } catch(e) {
+    updateMsg(loadingId, '連線失敗，請稍後再試。');
+  }
+}
+
+function quickAsk(q) {
+  document.getElementById('ai-input').value=q;
+  sendAI();
+}
+
+let msgId=0;
+function appendMsg(role, html) {
+  const id = ++msgId;
+  const div = document.createElement('div');
+  div.className='ai-msg '+role;
+  div.id='msg-'+id;
+  div.innerHTML=`<div class="ai-avatar">${role==='bot'?'🌿':'👤'}</div><div class="ai-bubble">${html}</div>`;
+  document.getElementById('ai-messages').appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'end'});
+  return id;
+}
+function updateMsg(id, text) {
+  const el = document.getElementById('msg-'+id);
+  if(el) el.querySelector('.ai-bubble').textContent=text;
+}
+
+// ═══ ADMIN NAV ══════════════════════════════════════════════════
+function admNav(id,tabEl){
+  document.querySelectorAll('#dept-admin .page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('#adm-nav .nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('adm-page-'+id).classList.add('active');
+  if(tabEl)tabEl.classList.add('active');
+  if(id==='docs')renderDocs();
+  if(id==='alerts')renderAlerts();
+  if(id==='notes')renderNotes();
+  if(id==='accred')renderAccred();
+}
+
+// ═══ ADMIN JS ═══════════════════════════════════════════════════
+// ── State ─────────────────────────────────────
+let docs     = JSON.parse(localStorage.getItem('qiyu_admin_docs')   || '[]');
+let alerts   = JSON.parse(localStorage.getItem('qiyu_admin_alerts') || '[]');
+let notes    = JSON.parse(localStorage.getItem('qiyu_admin_notes')  || '[]');
+let accreds  = JSON.parse(localStorage.getItem('qiyu_admin_accred') || '[]');
+let pendingImages = []; // base64
+let aiAnalysis = null;
+
+function saveAll() {
+  localStorage.setItem('qiyu_admin_docs',   JSON.stringify(docs));
+  localStorage.setItem('qiyu_admin_alerts', JSON.stringify(alerts));
+  localStorage.setItem('qiyu_admin_notes',  JSON.stringify(notes));
+  localStorage.setItem('qiyu_admin_accred', JSON.stringify(accreds));
+}
+
+// ── Nav ───────────────────────────────────────
+
+// ── File handling ─────────────────────────────
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingImages.push(e.target.result);
+      renderPreviews();
+      document.getElementById('analyze-btn').disabled = false;
+      document.getElementById('ai-result-wrap').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('preview-grid');
+  grid.innerHTML = pendingImages.map((src,i) => `
+    <div class="img-thumb">
+      <img src="${src}">
+      <button class="del" onclick="removeImg(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeImg(i) {
+  pendingImages.splice(i,1);
+  renderPreviews();
+  if(pendingImages.length===0) document.getElementById('analyze-btn').disabled=true;
+}
+
+// ── AI analyze ────────────────────────────────
+async function analyzeDoc() {
+  if(pendingImages.length===0) return;
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  document.getElementById('analyze-btn-inner').innerHTML = '<span class="spinner"></span> 分析中...';
+  document.getElementById('ai-result-body').textContent = '正在分析文件...';
+  document.getElementById('ai-result-body').classList.remove('empty');
+  document.getElementById('ai-alerts-wrap').style.display='none';
+
+  // Build image content blocks
+  const imgBlocks = pendingImages.map(src => {
+    const [meta, data] = src.split(',');
+    const mimeMatch = meta.match(/data:([^;]+)/);
+    return {
+      type: 'image',
+      source: { type:'base64', media_type: mimeMatch?mimeMatch[1]:'image/jpeg', data }
+    };
+  });
+
+  const cat = document.getElementById('doc-cat').value;
+  const urgency = document.getElementById('doc-urgency').value;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`你是祈癒職能治療所的文書行政AI助理。分析上傳的文件圖片，用繁體中文回應。
+請以JSON格式回應（只回JSON，不要任何其他文字）：
+{
+  "title": "文件標題（自動判斷）",
+  "summary": "文件摘要（3-5句）",
+  "category": "文件類別",
+  "deadline": "截止日期（如有，YYYY-MM-DD格式，無則null）",
+  "alerts": [
+    {"level": "high/medium/low/info", "text": "注意事項內容"}
+  ],
+  "tags": ["標籤1","標籤2","標籤3"],
+  "action_required": true或false
+}
+alerts的level說明：high=需立即處理，medium=重要但不緊急，low=一般注意，info=參考資訊`,
+        messages:[{
+          role:'user',
+          content:[
+            ...imgBlocks,
+            {type:'text', text:`請分析這份${cat}文件（緊急程度：${urgency}），提取重要資訊並標記需要注意的事項。`}
+          ]
+        }]
+      })
+    });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '{}';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    aiAnalysis = JSON.parse(clean);
+    displayAnalysis(aiAnalysis);
+  } catch(e) {
+    document.getElementById('ai-result-body').textContent = '分析失敗，請確認網路連線後再試。\n\n' + e.message;
+  }
+
+  btn.disabled = false;
+  document.getElementById('analyze-btn-inner').innerHTML = '🤖 AI 分析公文';
+  document.getElementById('save-btn').style.display = '';
+}
+
+function displayAnalysis(a) {
+  const body = document.getElementById('ai-result-body');
+  let text = '';
+  if(a.title) text += `📄 ${a.title}\n\n`;
+  if(a.summary) text += `${a.summary}\n`;
+  if(a.deadline) text += `\n⏰ 截止日期：${a.deadline}`;
+  if(a.action_required) text += '\n⚡ 需要行動';
+  body.textContent = text || '分析完成';
+
+  if(a.alerts && a.alerts.length>0) {
+    document.getElementById('ai-alerts-wrap').style.display='';
+    document.getElementById('ai-alert-list').innerHTML = a.alerts.map(al=>`
+      <div class="alert-item ${al.level}">
+        <span class="alert-priority">${levelLabel(al.level)}</span>
+        <span class="alert-text">${al.text}</span>
+      </div>`).join('');
+  }
+}
+
+function levelLabel(l) {
+  return {high:'緊急',medium:'重要',low:'一般',info:'資訊'}[l]||l;
+}
+
+// ── Save doc ──────────────────────────────────
+function saveDoc() {
+  const title = document.getElementById('doc-title-input').value ||
+    (aiAnalysis?.title || '未命名文件');
+  const cat = document.getElementById('doc-cat').value;
+  const urgency = document.getElementById('doc-urgency').value;
+  const now = new Date().toISOString().slice(0,10);
+
+  const doc = {
+    id: Date.now(),
+    title,
+    cat,
+    urgency,
+    date: now,
+    summary: aiAnalysis?.summary || '',
+    tags: aiAnalysis?.tags || [],
+    alerts: aiAnalysis?.alerts || [],
+    deadline: aiAnalysis?.deadline || null,
+    action_required: aiAnalysis?.action_required || false,
+    thumb: pendingImages[0] || null
+  };
+
+  docs.unshift(doc);
+
+  // Add alerts to global alert list
+  if(doc.alerts.length>0) {
+    doc.alerts.forEach(al => {
+      alerts.unshift({
+        id: Date.now() + Math.random(),
+        level: al.level,
+        text: al.text,
+        source: doc.title,
+        date: now,
+        done: false
+      });
+    });
+  }
+  if(doc.deadline) {
+    alerts.unshift({
+      id: Date.now()+1,
+      level: urgency==='緊急'?'high':'medium',
+      text: `「${doc.title}」截止日：${doc.deadline}`,
+      source: doc.title,
+      date: now,
+      done: false
+    });
+  }
+
+  saveAll();
+  showToast('✓ 文件已儲存');
+  pendingImages = [];
+  renderPreviews();
+  document.getElementById('analyze-btn').disabled=true;
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('ai-result-body').textContent='上傳文件後點擊「AI 分析公文」';
+  document.getElementById('ai-result-body').classList.add('empty');
+  document.getElementById('ai-alerts-wrap').style.display='none';
+  document.getElementById('doc-title-input').value='';
+  aiAnalysis=null;
+}
+
+// ── Docs render ───────────────────────────────
+function renderDocs() {
+  const el = document.getElementById('doc-list');
+  const empty = document.getElementById('doc-empty');
+  if(docs.length===0){ el.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  el.innerHTML = docs.map(d=>`
+    <div class="doc-item">
+      <div class="doc-top">
+        <div class="doc-icon">${catIcon(d.cat)}</div>
+        <div class="doc-title">${d.title}</div>
+        ${d.alerts?.length>0?`<span class="doc-alert-badge">${d.alerts.length}</span>`:''}
+        <div class="doc-date">${d.date}</div>
+      </div>
+      <div class="doc-summary">${d.summary||'（無摘要）'}</div>
+      ${d.deadline?`<div style="font-size:11px;color:var(--red);margin-top:6px">⏰ 截止：${d.deadline}</div>`:''}
+      <div class="doc-tags">
+        <span class="doc-tag">${d.cat}</span>
+        ${(d.tags||[]).map(t=>`<span class="doc-tag">${t}</span>`).join('')}
+        ${d.urgency!=='一般'?`<span class="doc-tag" style="background:var(--red-pale);color:var(--red)">${d.urgency}</span>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function catIcon(cat) {
+  return {
+    '公文通知':'📜','評鑒文件':'🏅','合約協議':'✍️',
+    '財務單據':'💰','人事資料':'👤','課程教案':'📚','其他':'📄'
+  }[cat]||'📄';
+}
+
+// ── Alerts ────────────────────────────────────
+function renderAlerts() {
+  const el = document.getElementById('alert-list-main');
+  const empty = document.getElementById('alert-empty');
+  const active = alerts.filter(a=>!a.done);
+  if(active.length===0){ el.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  el.innerHTML = active.map(a=>`
+    <div class="alert-item ${a.level}" id="alert-${a.id}">
+      <span class="alert-priority">${levelLabel(a.level)}</span>
+      <span class="alert-text">
+        ${a.text}
+        ${a.source?`<br><span style="font-size:10px;opacity:.6">來源：${a.source}</span>`:''}
+      </span>
+      <button class="alert-done" onclick="doneAlert(${a.id})" title="標記完成">✓</button>
+    </div>`).join('');
+}
+
+function doneAlert(id) {
+  const al = alerts.find(a=>a.id===id);
+  if(al) al.done=true;
+  saveAll();
+  renderAlerts();
+  showToast('✓ 已完成');
+}
+
+function addManualAlert() {
+  const title = document.getElementById('alert-title').value.trim();
+  const desc = document.getElementById('alert-desc').value.trim();
+  const level = document.getElementById('alert-level').value;
+  if(!title) { showToast('請填寫標題'); return; }
+  alerts.unshift({
+    id: Date.now(), level,
+    text: title + (desc?`：${desc}`:''),
+    source:'手動新增',
+    date: new Date().toISOString().slice(0,10),
+    done: false
+  });
+  saveAll();
+  renderAlerts();
+  document.getElementById('alert-title').value='';
+  document.getElementById('alert-desc').value='';
+  showToast('✓ 待辦已新增');
+}
+
+// ── Notes ─────────────────────────────────────
+function addNote() {
+  const title = document.getElementById('note-title').value.trim();
+  const content = document.getElementById('note-content').value.trim();
+  const cat = document.getElementById('note-cat').value;
+  const pin = document.getElementById('note-pin').value==='1';
+  if(!title||!content){ showToast('請填寫標題與內容'); return; }
+  notes.unshift({ id:Date.now(), title, content, cat, pin, date:new Date().toISOString().slice(0,10) });
+  saveAll();
+  renderNotes();
+  document.getElementById('note-title').value='';
+  document.getElementById('note-content').value='';
+  showToast('✓ 記事已儲存');
+}
+
+function deleteNote(id) {
+  notes = notes.filter(n=>n.id!==id);
+  saveAll();
+  renderNotes();
+}
+
+function renderNotes() {
+  const grid = document.getElementById('note-grid');
+  const empty = document.getElementById('note-empty');
+  if(notes.length===0){ grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  const sorted = [...notes].sort((a,b)=>((b.pin?1:0)-(a.pin?1:0)));
+  const catColors = {
+    '公文追蹤':'background:var(--amber-pale);color:var(--amber)',
+    '評鑒準備':'background:#f0e8d4;color:#8a6020',
+    '行政事務':'background:var(--blue-pale);color:var(--blue)',
+    '人事':'background:var(--red-pale);color:var(--red)',
+    '其他':'background:var(--paper2);color:var(--muted)'
+  };
+  grid.innerHTML = sorted.map(n=>`
+    <div class="note-card ${n.pin?'pinned':''}">
+      <div class="note-card-header">
+        <span class="note-cat" style="${catColors[n.cat]||''}">${n.cat}</span>
+        <span class="note-date">${n.date}</span>
+      </div>
+      <div style="font-size:13px;font-weight:500;margin-bottom:6px">${n.title}</div>
+      <div class="note-text">${n.content}</div>
+      <button class="note-del" onclick="deleteNote(${n.id})">✕</button>
+    </div>`).join('');
+}
+
+// ── Accreditation ──────────────────────────────
+function addAccredDoc() {
+  const cat = document.getElementById('accred-cat').value;
+  const year = document.getElementById('accred-year').value;
+  const name = document.getElementById('accred-docname').value.trim();
+  const note = document.getElementById('accred-note').value.trim();
+  if(!name){ showToast('請填寫文件名稱'); return; }
+  accreds.unshift({ id:Date.now(), cat, year, name, note, date:new Date().toISOString().slice(0,10) });
+  saveAll();
+  renderAccred();
+  document.getElementById('accred-docname').value='';
+  document.getElementById('accred-note').value='';
+  showToast('✓ 評鑒文件已新增');
+}
+
+function openAccredCat(cat) {
+  // Filter and show - just scroll to list
+  renderAccred(cat);
+  document.getElementById('accred-list').scrollIntoView({behavior:'smooth'});
+}
+
+function renderAccred(filterCat) {
+  // Update counts
+  const cats = ['服務品質','人員資格','環境設備','行政管理'];
+  cats.forEach(c => {
+    const count = accreds.filter(a=>a.cat===c).length;
+    document.getElementById('ac-count-'+c).textContent = count + ' 份文件';
+    document.getElementById('ac-bar-'+c).style.width = Math.min(count*20,100)+'%';
+  });
+
+  const list = document.getElementById('accred-list');
+  const empty = document.getElementById('accred-empty');
+  const filtered = filterCat ? accreds.filter(a=>a.cat===filterCat) : accreds;
+  if(filtered.length===0){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML = filtered.map(a=>`
+    <div class="doc-item">
+      <div class="doc-top">
+        <div class="doc-icon">🏅</div>
+        <div class="doc-title">${a.name}</div>
+        <div class="doc-date">${a.year}年度</div>
+      </div>
+      <div class="doc-tags">
+        <span class="doc-tag">${a.cat}</span>
+        <span class="doc-tag">${a.date}</span>
+      </div>
+      ${a.note?`<div class="doc-summary" style="margin-top:6px">${a.note}</div>`:''}
+    </div>`).join('');
+}
+
+// ═══ LOGIN ═══════════════════════════════════════════════════════
+// 帳號密碼設定（可修改）
+const ACCOUNTS = {
+  'admin':   'qiyu2025',
+  'qiyu':    'qiyu2025',
+  'manager': 'rehab2025'
+};
+
+function doLogin() {
+  var user = document.getElementById('login-user').value.trim();
+  var pass = document.getElementById('login-pass').value;
+  var err  = document.getElementById('login-error');
+  if(ACCOUNTS[user] && ACCOUNTS[user] === pass) {
+    err.classList.remove('show');
+    var loginEl = document.getElementById('screen-login');
+    loginEl.style.transition = 'opacity .5s';
+    loginEl.style.opacity = '0';
+    loginEl.style.pointerEvents = 'none';
+    setTimeout(function(){ loginEl.style.display='none'; }, 500);
+    sessionStorage.setItem('qiyu_auth','1');
+  } else {
+    err.classList.add('show');
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+// Allow Enter key to login
+document.addEventListener('keydown', function(e){
+  if(e.key==='Enter'){
+    var login = document.getElementById('screen-login');
+    if(login && login.style.display !== 'none' && login.style.opacity !== '0') doLogin();
+  }
+});
+
+// Check if already logged in this session
+(function(){
+  if(sessionStorage.getItem('qiyu_auth')==='1'){
+    var loginEl = document.getElementById('screen-login');
+    if(loginEl) loginEl.style.display='none';
+  }
+})();
+
+// ═══ INIT ════════════════════════════════════════════════════════
+hubPlace();
+(function(){
+  var today=new Date().toISOString().slice(0,10);
+  var d1=document.getElementById('inc-date');if(d1)d1.value=today;
+  var d2=document.getElementById('exp-date');if(d2)d2.value=today;
+})();
+</script>
+</body>
+</html>
