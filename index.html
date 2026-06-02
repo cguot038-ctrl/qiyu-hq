@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>祈癒職能治療所 · 管理系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&family=Noto+Sans+TC:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC',sans-serif;min-height:100vh;background:#0e2018;color:#1a1a18}
+
+/* ── LOGIN ── */
+#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#1a3a28,#0a1a12);z-index:100}
+#login.hide{display:none}
+.login-box{width:min(320px,90vw);padding:40px 28px 32px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:20px;backdrop-filter:blur(20px)}
+.login-icon{text-align:center;font-size:48px;margin-bottom:10px;filter:drop-shadow(0 4px 12px rgba(80,200,100,.4))}
+.login-title{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:300;color:#d8f0d8;letter-spacing:3px;text-align:center;line-height:1.6;margin-bottom:4px}
+.login-sub{font-family:'DM Mono',monospace;font-size:10px;color:rgba(160,220,160,.5);letter-spacing:2px;text-align:center;margin-bottom:28px}
+.login-label{display:block;font-size:11px;color:rgba(200,240,200,.7);letter-spacing:1px;margin-bottom:6px}
+.login-input{width:100%;padding:11px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#e8f8e8;font-size:14px;font-family:'Noto Sans TC',sans-serif;outline:none;margin-bottom:14px}
+.login-input:focus{border-color:rgba(100,200,100,.5)}
+.login-input::placeholder{color:rgba(255,255,255,.25)}
+.login-remember{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(200,240,200,.6);margin-bottom:14px;cursor:pointer}
+.login-remember input{accent-color:#4a9060;width:15px;height:15px}
+.login-btn{width:100%;padding:13px;background:linear-gradient(135deg,#3a7a48,#2a6038);color:#e8f8e8;border:none;border-radius:10px;font-size:15px;font-family:'Noto Serif TC',serif;font-weight:300;letter-spacing:3px;cursor:pointer}
+.login-btn:active{opacity:.85}
+.login-err{color:#ff9090;font-size:12px;text-align:center;margin-top:10px;display:none}
+.login-err.show{display:block}
+
+/* ── DASHBOARD ── */
+#dashboard{display:none;flex-direction:column;min-height:100vh;background:linear-gradient(160deg,#1e4530,#0e2018)}
+#dashboard.show{display:flex}
+.db-top{padding:20px 16px 16px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(100,200,100,.1);display:flex;align-items:center;gap:12px}
+.db-logo{font-size:28px;filter:drop-shadow(0 2px 8px rgba(80,200,100,.4))}
+.db-title{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:300;color:#c8f0d0;letter-spacing:3px}
+.db-sub{font-family:'DM Mono',monospace;font-size:9px;color:rgba(140,220,140,.4);letter-spacing:2px;margin-top:3px}
+.db-logout{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:rgba(180,240,180,.4);background:none;border:1px solid rgba(100,200,100,.15);border-radius:8px;padding:6px 12px;cursor:pointer;color:rgba(200,240,200,.5)}
+.db-body{flex:1;padding:24px 16px 48px;max-width:560px;margin:0 auto;width:100%}
+.db-section{font-family:'DM Mono',monospace;font-size:10px;color:rgba(160,220,160,.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(100,200,100,.1)}
+.db-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+
+.db-card{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;text-decoration:none}
+.db-card.on{border-left:3px solid}
+.db-card.on:active{background:rgba(255,255,255,.1);transform:translateX(2px)}
+.db-card.off{opacity:.5;cursor:default}
+.db-icon{font-size:26px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.06);flex-shrink:0}
+.db-info{flex:1}
+.db-name{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:300;color:#e0f0e0;letter-spacing:1.5px;margin-bottom:3px}
+.db-desc{font-size:11px;color:rgba(180,220,180,.5);line-height:1.5}
+.db-badge{font-family:'DM Mono',monospace;font-size:9px;padding:3px 8px;border-radius:8px;flex-shrink:0}
+.badge-on{background:rgba(60,160,80,.25);color:#70d080}
+.badge-off{background:rgba(255,255,255,.08);color:rgba(180,180,180,.5)}
+.db-arrow{font-size:18px;color:rgba(180,240,180,.3);flex-shrink:0}
+
+.db-footer{text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:rgba(120,180,120,.25);letter-spacing:1px;padding:12px}
+
+/* ── DEPT SCREEN ── */
+.dept{display:none;flex-direction:column;min-height:100vh;background:#f5f0e8}
+.dept.show{display:flex}
+.dept-hdr{background:#1a1a18;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.dept-back{color:#888;font-size:22px;background:none;border:none;cursor:pointer;padding:0 8px 0 0;line-height:1}
+.dept-hdr-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:300;color:#f0ece4;letter-spacing:3px}
+.dept-hdr-sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;margin-top:2px}
+.dept-body{flex:1;overflow-y:auto;padding:20px 16px 40px}
+.coming-soon{text-align:center;padding:60px 20px;color:#7a7060}
+.coming-icon{font-size:48px;margin-bottom:16px}
+.coming-title{font-family:'Noto Serif TC',serif;font-size:20px;margin-bottom:8px}
+.coming-desc{font-size:13px;line-height:1.8;color:#aaa}
+
+/* ── SYSTEMS SCREEN ── */
+.sys-body{padding:16px}
+.sys-group{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:2px;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid #e0d8c8}
+.sys-link{display:flex;align-items:center;gap:12px;padding:14px 16px;background:white;border:1px solid #cac2b0;border-radius:12px;margin-bottom:8px;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.sys-link:active{background:#f0ece4}
+.sys-link-icon{font-size:24px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;flex-shrink:0}
+.sys-link-name{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:300;color:#1a1a18;margin-bottom:3px;letter-spacing:1px}
+.sys-link-desc{font-size:11px;color:#888;line-height:1.5}
+.sys-arrow{font-size:16px;color:#aaa;margin-left:auto;flex-shrink:0}
+.sys-live{width:8px;height:8px;border-radius:50%;background:#4a9a60;box-shadow:0 0 6px rgba(74,154,96,.6);flex-shrink:0}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a18;color:#f0ece4;padding:10px 22px;border-radius:20px;font-size:13px;transition:transform .3s;z-index:9999;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <div class="login-icon">🌿</div>
+    <div class="login-title">祈癒職能治療所<br>管理系統</div>
+    <div class="login-sub">QIYU OT CLINIC · ADMIN</div>
+    <label class="login-label">帳號</label>
+    <input class="login-input" id="u" type="text" placeholder="請輸入帳號" autocomplete="username">
+    <label class="login-label">密碼</label>
+    <input class="login-input" id="p" type="password" placeholder="請輸入密碼" autocomplete="current-password">
+    <label class="login-remember"><input type="checkbox" id="rem" checked> 記住帳號</label>
+    <button class="login-btn" id="loginBtn">登 入</button>
+    <div class="login-err" id="loginErr">帳號或密碼錯誤</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="db-top">
+    <div class="db-logo">🌿</div>
+    <div>
+      <div class="db-title">祈癒職能治療所</div>
+      <div class="db-sub">管理系統 · ADMIN DASHBOARD</div>
+    </div>
+    <button class="db-logout" id="logoutBtn">登出</button>
+  </div>
+  <div class="db-body">
+    <div class="db-section">部門選單</div>
+    <div class="db-cards">
+
+      <div class="db-card on" style="border-color:#3a7a50" data-dept="finance">
+        <div class="db-icon" style="background:rgba(58,122,80,.15)">📊</div>
+        <div class="db-info">
+          <div class="db-name">財務管理部</div>
+          <div class="db-desc">收支記錄 · 帳單掃描 · 勞健保 · AI顧問</div>
+        </div>
+        <span class="db-badge badge-on">已啟用</span>
+        <div class="db-arrow">›</div>
+      </div>
+
+      <div class="db-card on" style="border-color:#7a4a18" data-dept="admin">
+        <div class="db-icon" style="background:rgba(122,74,24,.15)">📋</div>
+        <div class="db-info">
+          <div class="db-name">文書行政部</div>
+          <div class="db-desc">公文整理 · 評鑒資料 · 待辦追蹤</div>
+        </div>
+        <span class="db-badge badge-on">已啟用</span>
+        <div class="db-arrow">›</div>
+      </div>
+
+      <div class="db-card on" style="border-color:#6a5010" data-dept="systems">
+        <div class="db-icon" style="background:rgba(106,80,16,.15)">🗂️</div>
+        <div class="db-info">
+          <div class="db-name">現有系統</div>
+          <div class="db-desc">假日營隊 · 居家復健 · 各系統連結</div>
+        </div>
+        <span class="db-badge badge-on">已啟用</span>
+        <div class="db-arrow">›</div>
+      </div>
+
+      <div class="db-card off">
+        <div class="db-icon">📚</div>
+        <div class="db-info">
+          <div class="db-name">課程規劃部</div>
+          <div class="db-desc">教案設計 · 課程排程 · 情緒/人際課程</div>
+        </div>
+        <span class="db-badge badge-off">規劃中</span>
+      </div>
+
+      <div class="db-card off">
+        <div class="db-icon">📣</div>
+        <div class="db-info">
+          <div class="db-name">行銷部門</div>
+          <div class="db-desc">IG · FB貼文 · 課程文宣設計</div>
+        </div>
+        <span class="db-badge badge-off">規劃中</span>
+      </div>
+
+    </div>
+    <div class="db-footer">QIYU OT CLINIC · 祈癒職能治療所</div>
+  </div>
+</div>
+
+<!-- FINANCE -->
+<div class="dept" id="dept-finance">
+  <div class="dept-hdr">
+    <button class="dept-back" onclick="back()">←</button>
+    <div>
+      <div class="dept-hdr-title">財務管理部</div>
+      <div class="dept-hdr-sub" style="color:#5a9a7a">FINANCE · BILLS · INSURANCE</div>
+    </div>
+  </div>
+  <div class="dept-body">
+    <div class="coming-soon">
+      <div class="coming-icon">📊</div>
+      <div class="coming-title">財務管理部</div>
+      <div class="coming-desc">收支記錄、帳單掃描、勞健保試算、AI財務顧問<br><br>此功能正在整合中，請稍候。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="dept" id="dept-admin">
+  <div class="dept-hdr">
+    <button class="dept-back" onclick="back()">←</button>
+    <div>
+      <div class="dept-hdr-title">文書行政部</div>
+      <div class="dept-hdr-sub" style="color:#d4a060">DOCUMENT · ADMIN</div>
+    </div>
+  </div>
+  <div class="dept-body">
+    <div class="coming-soon">
+      <div class="coming-icon">📋</div>
+      <div class="coming-title">文書行政部</div>
+      <div class="coming-desc">公文整理、評鑒資料、待辦追蹤<br><br>此功能正在整合中，請稍候。</div>
+    </div>
+  </div>
+</div>
+
+<!-- SYSTEMS -->
+<div class="dept" id="dept-systems">
+  <div class="dept-hdr">
+    <button class="dept-back" onclick="back()">←</button>
+    <div>
+      <div class="dept-hdr-title">現有系統</div>
+      <div class="dept-hdr-sub" style="color:#c8a840">SYSTEMS · LAUNCHER</div>
+    </div>
+  </div>
+  <div class="dept-body">
+    <div class="sys-body">
+      <div class="sys-group">行政管理系統</div>
+
+      <a class="sys-link" href="https://cguot038-ctrl.github.io/holiday-camp/admin.html" target="_blank">
+        <div class="sys-link-icon" style="background:rgba(58,122,80,.1)">🏕️</div>
+        <div>
+          <div class="sys-link-name">假日營隊 管理後台</div>
+          <div class="sys-link-desc">班別管理、報名審核、繳費追蹤、緊急通報</div>
+        </div>
+        <div class="sys-live"></div>
+        <div class="sys-arrow">↗</div>
+      </a>
+
+      <a class="sys-link" href="https://cguot038-ctrl.github.io/Rehab/" target="_blank">
+        <div class="sys-link-icon" style="background:rgba(80,50,120,.1)">🏥</div>
+        <div>
+          <div class="sys-link-name">居家復健 管理系統</div>
+          <div class="sys-link-desc">個案記錄、治療紀錄、CSMS匯出</div>
+        </div>
+        <div class="sys-live"></div>
+        <div class="sys-arrow">↗</div>
+      </a>
+
+      <div class="sys-group">家屬端</div>
+
+      <a class="sys-link" href="https://cguot038-ctrl.github.io/holiday-camp/" target="_blank">
+        <div class="sys-link-icon" style="background:rgba(58,122,80,.08)">📝</div>
+        <div>
+          <div class="sys-link-name">假日營隊 家屬報名端</div>
+          <div class="sys-link-desc">家屬自行報名、藥物授權簽名（勿修改）</div>
+        </div>
+        <div class="sys-live"></div>
+        <div class="sys-arrow">↗</div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var ACCOUNTS = { admin:'qiyu2025', qiyu:'qiyu2025', manager:'qiyu2025' };
+
+function $(id){ return document.getElementById(id); }
+function showToast(msg){ var t=$('toast'); t.textContent=msg; t.className='toast show'; setTimeout(function(){ t.className='toast'; },2000); }
+
+// ── LOGIN ──
+function doLogin(){
+  var u = $('u').value.trim();
+  var p = $('p').value;
+  if(ACCOUNTS[u] && ACCOUNTS[u]===p){
+    $('loginErr').className='login-err';
+    if($('rem').checked) localStorage.setItem('qiyu_user',u);
+    else localStorage.removeItem('qiyu_user');
+    localStorage.setItem('qiyu_auth','1');
+    $('login').className='hide';
+    $('dashboard').className='show';
+  } else {
+    $('loginErr').className='login-err show';
+    $('p').value='';
+  }
+}
+
+$('loginBtn').addEventListener('click', doLogin);
+$('p').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+$('u').addEventListener('keydown', function(e){ if(e.key==='Enter') $('p').focus(); });
+
+// ── LOGOUT ──
+$('logoutBtn').addEventListener('click', function(){
+  localStorage.removeItem('qiyu_auth');
+  $('dashboard').className='';
+  $('login').className='';
+  back();
+});
+
+// ── DEPT NAV ──
+document.querySelectorAll('.db-card.on').forEach(function(card){
+  card.addEventListener('click', function(){
+    var dept = this.dataset.dept;
+    if(!dept) return;
+    $('dashboard').className='';
+    document.querySelectorAll('.dept').forEach(function(d){ d.className='dept'; });
+    $('dept-'+dept).className='dept show';
+  });
+});
+
+function back(){
+  document.querySelectorAll('.dept').forEach(function(d){ d.className='dept'; });
+  $('dashboard').className='show';
+}
+
+// ── INIT ──
+(function(){
+  var saved = localStorage.getItem('qiyu_user');
+  if(saved) $('u').value = saved;
+  if(localStorage.getItem('qiyu_auth')==='1'){
+    $('login').className='hide';
+    $('dashboard').className='show';
+  }
+})();
+</script>
+</body>
+</html>
